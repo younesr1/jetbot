@@ -1,0 +1,5 @@
+#ignore vscode stuff
+.vscode
+
+#ignore the todo.txt
+todo.txt
