@@ -17,7 +17,6 @@ class Client {
     void SendMotorData(CONFIG::MOTORS::MotorID id, uint8_t val);
     private:
     int sockfd;
-    char buffer[MAXLINE];
     sockaddr_in servaddr;
 };
 #endif

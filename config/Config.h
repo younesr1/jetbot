@@ -5,15 +5,16 @@
 
 namespace CONFIG {
     namespace MOTORS {
-        enum MotorID{
+        enum MotorID : uint8_t{
             MOTORLEFT,
             MOTORIGHT
         };
     }
     namespace TELEOP {
-        enum {
+        enum uint32_t{
             PORT = 8080,
-            ADDR = 0x00000000
+            JETBOTADDR = 0x00000000,
+            BASESTATIONADDR = 0x00000001
         };
     }
 }

@@ -10,10 +10,14 @@ Client::Client() {
     // Filling server information 
     servaddr.sin_family = AF_INET; 
     servaddr.sin_port = htons(CONFIG::TELEOP::PORT); 
-    servaddr.sin_addr.s_addr = CONFIG::TELEOP::ADDR;
+    servaddr.sin_addr.s_addr = INADDR_ANY;
 }
 
 void Client::SendMotorData(CONFIG::MOTORS::MotorID id, uint8_t val) {
     uint8_t payload[] = {id, val};
     sendto(sockfd, payload, sizeof(payload), MSG_CONFIRM, (sockaddr *) &servaddr, sizeof(servaddr));
+}
+
+Client::~Client() {
+    close(sockfd);
 }
