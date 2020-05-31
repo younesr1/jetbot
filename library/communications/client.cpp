@@ -1,4 +1,4 @@
-#include "Client.h"
+#include "client.h"
 
 Client::Client() {
     sockfd = socket(AF_INET, SOCK_DGRAM,0);

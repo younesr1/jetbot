@@ -1,4 +1,4 @@
-#include "Controller.h"
+#include "controller.h"
 #include <fcntl.h>
 #include <unistd.h>
 #include <string>
@@ -13,8 +13,7 @@ controller::~controller() {
     close(_fd);
 }
 
-bool controller::sample()
-{
+bool controller::sample() {
   int bytes = read(_fd, &_event, sizeof(_event)); 
   if (bytes == -1)
     return false;
@@ -51,5 +50,5 @@ bool controller::R2triggered() {
 
 bool controller::leftJStriggered() {
     if(_event.type & JS_EVENT_AXIS)
-        return _event.number == LEFTJSX; // || _event.number == LEFTJSY) {
+        return _event.number == LEFTJSX;
 }

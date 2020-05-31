@@ -9,12 +9,12 @@
 #include <sys/socket.h> 
 #include <arpa/inet.h> 
 #include <netinet/in.h>
-#include "Config.h"
-using namespace std::literals::chrono_literals;
+#include "config.h"
 // when compiling, must link $ gcc test.c -lcurl bc external lib
-class Server {
+class server {
     public:
-    Server();
+    ~server();
+    server();
     void run();
     private:
     void serve();

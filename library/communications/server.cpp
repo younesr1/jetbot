@@ -1,6 +1,6 @@
-#include "Server.h"
+#include "server.h"
 
-Server::Server() {
+server::server() {
     sockfd = socket(AF_INET, SOCK_DGRAM, 0);
     if(sockfd < 0) {
         perror("socket creation failed"); 
@@ -19,21 +19,19 @@ Server::Server() {
     }
 }
 
-void Server::run() {
-    std::thread workerThread(serve);
-    std::cout << "Server thread initiated." << std::endl;
+void server::run() {
 }
 
-void Server::serve() {
+void server::serve() {
     uint8_t payload[2] = {0};
     while (true) {
         recvfrom(sockfd, payload, sizeof(payload), MSG_WAITALL, (sockaddr *) &cliaddr, &cliAddrLen);
         // now do stuff with payload[0] and payload[1]
-        std::this_thread::sleep_for(1s);
+        //std::this_thread::sleep_for(1s);
     }
     
 }
 
-Server::~Server() {
+server::~server() {
     close(sockfd);
 }
