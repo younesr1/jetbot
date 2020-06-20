@@ -23,32 +23,35 @@ bool controller::sample() {
   return bytes == sizeof(_event);
 }
 
-void controller::run() {
-    while(true) {
-        // Restrict rate
-        usleep(1000);
-        // only act if there's new data
-        if(sample()) {
-            if(R2triggered()) {
-                // pf[0,100]
-                _pf = ((_event.value + MAX_JS) / (MAX_JS*2.0))*100;
-            }
-            else if(leftJStriggered()) {
-                // temp[-100,100]
-                int8_t temp = (((_event.value + MAX_JS) / (MAX_JS*2.0))*200)-100;
-                _lr = temp < 0 ? 100 + temp : 100;
-                _rr = temp > 0 ? 100 - temp : 100; 
-            }
+boost::optional<controller::motorSpeeds> controller::pollOnce() {
+    bool newData = false;
+    // only act if there's new data
+    if(sample()) {
+        if(R2triggered()) {
+            // pf[0,100]
+            _pf = ((_event.value / CONFIG::CONTROLLER::MAX_JS) + 1) * 50;
+            newData = true;
+        }
+        if(leftJStriggered()) {
+            // temp[-100,100]
+            int8_t temp = 100 * _event.value / CONFIG::CONTROLLER::MAX_JS;
+            _lr = temp < 0 ? 100 + temp : 100;
+            _rr = temp > 0 ? 100 - temp : 100;
+            newData = true;
         }
     }
+   controller::motorSpeeds ret = {_lr*_pf/100, _rr*_pf/100};
+    if(newData)
+        return ret;
+    return boost::none;
 }
 
 bool controller::R2triggered() {
-    if(_event.type & JS_EVENT_AXIS)
-        return _event.number == R2;
+    if(_event.type & CONFIG::CONTROLLER::JS_EVENT_AXIS)
+        return _event.number == CONFIG::CONTROLLER::R2;
 }
 
 bool controller::leftJStriggered() {
-    if(_event.type & JS_EVENT_AXIS)
-        return _event.number == LEFTJSX;
+    if(_event.type & CONFIG::CONTROLLER::JS_EVENT_AXIS)
+        return _event.number == CONFIG::CONTROLLER::LEFTJSX;
 }

@@ -2,48 +2,67 @@
 BUILD_FOLDER := build
 APPS_FOLDER := apps
 LIBRARY_FOLDER := library
-COMMS_FOLDER := communications
 CONTROLLER_FOLDER := controller
+MOTOR_FOLDER:= motor
+CONFIG_FOLER := config
 LIB_PATH := $(LIBRARY_FOLDER)
 BUILD_PATH := $(BUILD_FOLDER)
 APPS_PATH := $(APPS_FOLDER)
-COMMS_PATH := $(LIB_PATH)/$(COMMS_FOLDER)
 CONTROLLER_PATH := $(LIB_PATH)/$(CONTROLLER_FOLDER)
+MOTOR_PATH := $(LIB_PATH)/$(MOTOR_FOLDER)
+CONFIG_PATH := $(CONFIG_FOLER)
 # COMPILATION
 CPP = g++
-INCLUDE_FLAG = -I
 # DEPENDENCIES
-INCLUDE = $(COMMS_PATH)/*.h #add all headers here
-INCLUDE += $(CONTROLLER_PATH)/*.h
+INCLUDES += -I$(CONTROLLER_PATH)
+INCLUDES += -I$(CONFIG_PATH)
+INCLUDES += -I$(MOTOR_PATH)
 # OBJECTS
-OBJS = $(BUILD_PATH)/main.o
-OBJS += $(BUILD_PATH)/client.o
-OBJS += $(BUILD_PATH)/server.o
+OBJS += $(BUILD_PATH)/jetbot.o
 OBJS += $(BUILD_PATH)/controller.o
+OBJS += $(BUILD_PATH)/adafruitdcmotor.o
+OBJS += $(BUILD_PATH)/adafruitmotorhat.o
+OBJS += $(BUILD_PATH)/drivetrain.o
+OBJS += $(BUILD_PATH)/i2cdevice.o
+OBJS += $(BUILD_PATH)/pwm.o
 
-
-
-# $(BUILD_PATH)/%.o: %.cpp $(INCLUDE) \
-	$(CPP) -c -o $@ $< $(INCLUDE_FLAG) $(INCLUDE) \
-$(BUILD_PATH)/jetbot: $(OBJS) \
-	$(CPP) -o $@ $(OBJS) $(INCLUDE_FLAG) $(INCLUDE)
 ################################################################################################################################################
-jetbot: $(OBJS)
-	$(CPP) $^ -o $(BUILD_PATH)/$@
+jetbot: $(OBJS) $(BUILD_PATH)/jetbot.o
+	$(CPP) $^ -o $(BUILD_PATH)/$@.run
 	+@echo "====================================================="
 	+@echo "=============== Compiled Successfuly ================"
 	+@echo "====================================================="
-$(BUILD_PATH)/main.o: apps/jetbot/main.cpp
-	+@echo "Compile: main.cpp"
-	$(CPP) -c $(APPS_PATH)/jetbot/main.cpp -I library/controller -o $(BUILD_PATH)/main.o
-$(BUILD_PATH)/client.o: library/communications/client.cpp library/communications/client.h
-	+@echo "Compile: client.cpp"
-	$(CPP) -c $(COMMS_PATH)/client.cpp -I config -o $(BUILD_PATH)/client.o
-$(BUILD_PATH)/server.o: library/communications/server.cpp library/communications/server.h
-	+@echo "Compile: server.cpp"
-	$(CPP) -c $(COMMS_PATH)/server.cpp -I config -o $(BUILD_PATH)/server.o
-$(BUILD_PATH)/controller.o: library/controller/controller.cpp library/controller/controller.h
+
+$(BUILD_PATH)/jetbot.o: $(APPS_PATH)/jetbot.cpp
+	+@echo "Compile: jetbot.cpp"
+	$(CPP) -c $(APPS_PATH)/jetbot.cpp $(INCLUDES) -o $@
+
+$(BUILD_PATH)/controller.o: $(CONTROLLER_PATH)/controller.cpp $(CONTROLLER_PATH)/controller.h
 	+@echo "Compile: controller.cpp"
-	$(CPP) -c $(CONTROLLER_PATH)/controller.cpp -o $(BUILD_PATH)/controller.o
+	$(CPP) -c $< $(INCLUDES) -o $@
+
+$(BUILD_PATH)/adafruitdcmotor.o: $(MOTOR_PATH)/adafruitdcmotor.cpp $(MOTOR_PATH)/adafruitdcmotor.h
+	+@echo "Compile: adafruitdcmotor.cpp"
+	$(CPP) -c $< $(INCLUDES) -o $@
+
+$(BUILD_PATH)/adafruitmotorhat.o: $(MOTOR_PATH)/adafruitmotorhat.cpp $(MOTOR_PATH)/adafruitmotorhat.h
+	+@echo "Compile: adafruitmotorhat.cpp"
+	$(CPP) -c $< $(INCLUDES) -o $@
+
+$(BUILD_PATH)/drivetrain.o: $(MOTOR_PATH)/drivetrain.cpp $(MOTOR_PATH)/drivetrain.h
+	+@echo "Compile: drivetrain.cpp"
+	$(CPP) -c $< $(INCLUDES) -o $@
+
+$(BUILD_PATH)/i2cdevice.o: $(MOTOR_PATH)/i2cdevice.cpp $(MOTOR_PATH)/i2cdevice.h
+	+@echo "Compile: i2cdevice.cpp"
+	$(CPP) -c $< $(INCLUDES) -o $@
+
+$(BUILD_PATH)/pwm.o: $(MOTOR_PATH)/pwm.cpp $(MOTOR_PATH)/pwm.h
+	+@echo "Compile: pwm.cpp"
+	$(CPP) -c $< $(INCLUDES) -o $@	
+
 clean:
 	rm -rf $(BUILD_PATH)/*
+	+@echo "====================================================="
+	+@echo "=============== Cleaned Build Folder ================"
+	+@echo "====================================================="

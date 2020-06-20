@@ -1,22 +1,23 @@
-#ifndef _CONFIG_H
-#define _CONFIG_H
-
-#define JETBOTURL "10.232.25.1"
+#pragma once
 
 namespace CONFIG {
     namespace MOTORS {
-        enum MotorID : uint8_t{
-            MOTORLEFT,
-            MOTORIGHT
+        enum {
+            MOTORLEFT = 1,
+            MOTORRIGHT = 2,
+        };
+        enum {
+            DEADZONE = 5
         };
     }
-    namespace TELEOP {
-        enum uint32_t{
-            PORT = 8080,
-            JETBOTADDR = 0x00000000,
-            BASESTATIONADDR = 0x00000001
+    namespace CONTROLLER{
+        enum {
+            LEFTJSX = 0,
+            LEFTJSY = 1,
+            JS_EVENT_BUTTON = 1,
+            JS_EVENT_AXIS = 2,
+            R2 = 5,
+            MAX_JS = 32767
         };
     }
 }
-
-#endif
