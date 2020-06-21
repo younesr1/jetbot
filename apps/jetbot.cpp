@@ -11,6 +11,6 @@ int main() {
             motors.leftMotor->run(ret.get().motorLeftSpeed);
             motors.rightMotor->run(ret.get().motorRightSpeed);
         }
-        std::this_thread::sleep_for(std::chrono::milliseconds(200));
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
 }

@@ -1,57 +1,74 @@
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// Copyright Drew Noakes 2013-2016
+
 #include "controller.h"
+
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <fcntl.h>
-#include <unistd.h>
+#include <iostream>
 #include <string>
+#include <sstream>
+#include "unistd.h"
 
-controller::controller() {
-    std::string devicePath = "/dev/input/js0";
-    _fd = open(devicePath.c_str(), O_RDONLY | O_NONBLOCK);
-    if(_fd == -1) perror("Fatal: Unable to open joystick file");
+controller::controller() : _pf(0), _lr(100), _rr(100)
+{
+  std::string devicePath = "/dev/input/js0";
+  // Open the device using either blocking or non-blocking
+  _fd = open(devicePath.c_str(), /*blocking ? O_RDONLY : */O_RDONLY | O_NONBLOCK);
+  if(!(_fd >= 0)) {
+    printf("open failed.\n");
+    exit(1);
+  }
 }
 
-controller::~controller() {
-    close(_fd);
-}
-
-bool controller::sample() {
-  int bytes = read(_fd, &_event, sizeof(_event)); 
+bool controller::sample(controllerEvent* controllerEvent)
+{
+  int bytes = read(_fd, controllerEvent, sizeof(*controllerEvent)); 
   if (bytes == -1)
     return false;
-
-  // NOTE if this condition is not met, we're probably out of sync and this
-  // controller instance is likely unusable
-  return bytes == sizeof(_event);
+  return bytes == sizeof(*controllerEvent);
 }
 
 boost::optional<controller::motorSpeeds> controller::pollOnce() {
-    bool newData = false;
-    // only act if there's new data
-    if(sample()) {
-        if(R2triggered()) {
-            // pf[0,100]
-            _pf = ((_event.value / CONFIG::CONTROLLER::MAX_JS) + 1) * 50;
-            newData = true;
-        }
-        if(leftJStriggered()) {
-            // temp[-100,100]
-            int8_t temp = 100 * _event.value / CONFIG::CONTROLLER::MAX_JS;
-            _lr = temp < 0 ? 100 + temp : 100;
-            _rr = temp > 0 ? 100 - temp : 100;
-            newData = true;
-        }
-    }
-   controller::motorSpeeds ret = {_lr*_pf/100, _rr*_pf/100};
-    if(newData)
-        return ret;
-    return boost::none;
+  bool newData = false;
+  if (sample(&_event))
+  {
+      if(_event.R2triggered() && !_event.isInitialState()) {
+        //std::cout << "R2 triggered with value: " << _event.value << std::endl;
+        _pf = ((_event.value / 32767.0) + 1) * 50;
+        // std::cout << "power factor = " << _pf << std::endl;
+        newData = true;
+      }
+      else if(_event.leftJStriggered() && !_event.isInitialState()) {
+        //std::cout << "Left JS triggered with value: " << _event.value << std::endl;
+        int8_t temp = 100 * _event.value / 32767.0;
+        _lr = temp < 0 ? 100 + temp : 100;
+        _rr = temp > 0 ? 100 - temp : 100;
+        //std::cout << "Left ratio = " << _lr << ", Right ratio = " << _rr << std::endl;
+        newData = true;
+      }
+  }
+  if(newData) {
+    //std::cout << "Left motor speed=  " << _lr*_pf/100 << "      Right motor speed = " << _rr*_pf/100 << std::endl;
+    controller::motorSpeeds ret = {_lr*_pf/100, _rr*_pf/100};
+    return ret;
+  }
+  return boost::none; 
 }
 
-bool controller::R2triggered() {
-    if(_event.type & CONFIG::CONTROLLER::JS_EVENT_AXIS)
-        return _event.number == CONFIG::CONTROLLER::R2;
-}
-
-bool controller::leftJStriggered() {
-    if(_event.type & CONFIG::CONTROLLER::JS_EVENT_AXIS)
-        return _event.number == CONFIG::CONTROLLER::LEFTJSX;
+controller::~controller()
+{
+  close(_fd);
 }
