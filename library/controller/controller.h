@@ -41,10 +41,10 @@ private:
       return (type & JS_EVENT_INIT) != 0;
     }
     bool R2triggered() {
-      return isAxis() && number == 5;
+      return isAxis() && (number == 4);
     }
     bool leftJStriggered() {
-      return isAxis() && number == 0;
+      return isAxis() && (number == 0);
     }
   };
   struct motorSpeeds {
