@@ -26,7 +26,7 @@ controller::controller() : _pf(0), _lr(100), _rr(100)
 {
   std::string devicePath = "/dev/input/js0";
   // Open the device using either blocking or non-blocking
-  _fd = open(devicePath.c_str(), /*blocking ? O_RDONLY : */O_RDONLY | O_NONBLOCK);
+  _fd = open(devicePath.c_str(), O_RDONLY | O_NONBLOCK);
   if(!(_fd >= 0)) {
     printf("open failed.\n");
     exit(1);
@@ -59,6 +59,12 @@ boost::optional<controller::motorSpeeds> controller::pollOnce() {
         //std::cout << "Left ratio = " << _lr << ", Right ratio = " << _rr << std::endl;
         newData = true;
       }
+      else if(_event.L2triggered() && !_event.isInitialState()) {
+        //std::cout << "R2 triggered with value: " << _event.value << std::endl;
+        _pf = ((_event.value / 32767.0) + 1) * 50 * -1;
+        // std::cout << "power factor = " << _pf << std::endl;
+        newData = true;
+      }
   }
   if(newData) {
     //std::cout << "Left motor speed=  " << _lr*_pf/100 << "      Right motor speed = " << _rr*_pf/100 << std::endl;
@@ -68,7 +74,6 @@ boost::optional<controller::motorSpeeds> controller::pollOnce() {
   return boost::none; 
 }
 
-controller::~controller()
-{
+controller::~controller() {
   close(_fd);
 }

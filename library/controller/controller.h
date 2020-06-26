@@ -15,6 +15,7 @@
 #pragma once
 
 #include "boost/optional.hpp"
+#include "config.h"
 #include <string>
 #include <iostream>
 
@@ -41,10 +42,13 @@ private:
       return (type & JS_EVENT_INIT) != 0;
     }
     bool R2triggered() {
-      return isAxis() && (number == 4);
+      return isAxis() && (number == CONFIG::CONTROLLER::R2);
+    }
+    bool L2triggered() {
+      return isAxis() && (number == CONFIG::CONTROLLER::L2);
     }
     bool leftJStriggered() {
-      return isAxis() && (number == 0);
+      return isAxis() && (number == CONFIG::CONTROLLER::LEFTJSX);
     }
   };
   struct motorSpeeds {
