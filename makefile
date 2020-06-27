@@ -25,10 +25,12 @@ OBJS += $(BUILD_PATH)/adafruitmotorhat.o
 OBJS += $(BUILD_PATH)/drivetrain.o
 OBJS += $(BUILD_PATH)/i2cdevice.o
 OBJS += $(BUILD_PATH)/pwm.o
+#THREADING
+THREAD_LIB := #-pthread
 
 ################################################################################################################################################
 jetbot: $(OBJS) $(BUILD_PATH)/jetbot.o
-	$(CPP) $^ -o $(BUILD_PATH)/$@.run
+	$(CPP) $^ $(THREAD_LIB) -o $(BUILD_PATH)/$@.run
 	+@echo "====================================================="
 	+@echo "=============== Compiled Successfuly ================"
 	+@echo "====================================================="

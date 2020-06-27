@@ -2,9 +2,12 @@
 #include "drivetrain.h"
 #include <thread>
 
+//static bool quit = false;
+//void waitForQuit();
 int main() {
     controller ps4_controller;
     drivetrain motors;
+    // std::thread endProgram(waitForQuit);
     while(true) {
         auto ret = ps4_controller.pollOnce();
         if(ret) {
@@ -13,4 +16,10 @@ int main() {
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
+    //endProgram.join();
 }
+
+/*void waitForQuit() {
+    std::cin.get();
+    quit = true;
+}*/
