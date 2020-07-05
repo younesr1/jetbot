@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint>
+#include <string>
 
 namespace CONFIG {
     namespace MOTORS {
@@ -9,7 +10,7 @@ namespace CONFIG {
             MOTORRIGHT = 2,
         };
     }
-    namespace CONTROLLER{
+    namespace CONTROLLER {
         enum {
             LEFTJSX = 0,
             LEFTJSY = 1,
@@ -19,5 +20,13 @@ namespace CONFIG {
             R2 = 4,
             MAX_JS = 32767
         };
+    }
+    namespace CAMERA {
+        const std::string WINDOWNAME = "SLAM";
+        constexpr uint16_t WIDTH = 1280;
+        constexpr uint16_t HEIGHT = 720;
+        constexpr uint8_t FPS = 60;
+        constexpr bool FLIP = false;
+
     }
 }
