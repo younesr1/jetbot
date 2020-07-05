@@ -36,6 +36,7 @@ jetbot: $(OBJS) $(BUILD_PATH)/jetbot.o
 	+@echo "====================================================="
 
 $(BUILD_PATH)/jetbot.o: $(APPS_PATH)/jetbot.cpp
+	mkdir $(BUILD_FOLDER)
 	+@echo "Compile: jetbot.cpp"
 	$(CPP) -c $(APPS_PATH)/jetbot.cpp $(INCLUDES) -o $@
 
@@ -64,7 +65,7 @@ $(BUILD_PATH)/pwm.o: $(MOTOR_PATH)/pwm.cpp $(MOTOR_PATH)/pwm.h
 	$(CPP) -c $< $(INCLUDES) -o $@	
 
 clean:
-	rm -rf $(BUILD_PATH)/*
+	rm -rf $(BUILD_PATH)
 	+@echo "====================================================="
 	+@echo "=============== Cleaned Build Folder ================"
 	+@echo "====================================================="
