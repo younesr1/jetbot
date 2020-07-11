@@ -1,6 +1,7 @@
 #include "camera.h"
 #include "config.h"
 
+// TODO: Use 60 FPS
 camera::camera() : _pipeline("nvarguscamerasrc ! video/x-raw(memory:NVMM), width=(int)" + std::to_string(CONFIG::CAMERA::WIDTH) 
                              + ", height=(int)" + std::to_string(CONFIG::CAMERA::HEIGHT) + ", format=(string)NV12, framerate=(fraction)"
                              + std::to_string(CONFIG::CAMERA::FPS) + "/1 ! nvvidconv flip-method=" + std::to_string(CONFIG::CAMERA::FLIP) 
@@ -22,15 +23,15 @@ camera::~camera() {
 }
 
 void camera::record() {
-    // TODO: This cant be removed bc cv::waitKey breaks
-    cv::namedWindow(CONFIG::CAMERA::WINDOWNAME, cv::WINDOW_AUTOSIZE);
-    while (true) {
+    std::chrono::steady_clock::time_point begin(std::chrono::steady_clock::now()), end(std::chrono::steady_clock::now());
+    while (std::chrono::duration_cast<std::chrono::seconds>(end - begin) < CONFIG::CAMERA::RECORDTIME) {
+        end = std::chrono::steady_clock::now();
         if (!_cap.read(_img)) {
 		    std::cout<<"Capture read error"<<std::endl;
 		    break;
 	    }
         _video.write(_img);
-        int keycode = cv::waitKey(30) & 0xff ; 
-        if (keycode == 27) break;
     }
+    std::cout << "Ending camera recording." << std::endl;
+    this->~camera();
 }

@@ -3,7 +3,7 @@
 
 class camera {
 private:
-    std::string _pipeline;
+    const std::string _pipeline;
     cv::VideoCapture _cap;
     cv::Mat _img;
     cv::VideoWriter _video;
