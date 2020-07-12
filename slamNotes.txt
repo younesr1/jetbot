@@ -1,11 +1,18 @@
 course: https://www.youtube.com/watch?v=wVsfCnyt5jA&t=691s
 
-Probablistic SLAM: p(x,m|z,u) where {desired: {x: robot path, m: map}, given: {z: observations, u: controls/inputs}}
+SLAM Types: 
+    Probablistic SLAM: p(x,m|z,u) where {desired: {x: robot path, m: map}, given: {z: observations, u: controls/inputs}}
 
-Full SLAM: estimates entire path
+    Full SLAM: estimates entire path
 
-Online SLAM: Recovers only the most recent pose
+    Online SLAM: Recovers only the most recent pose
 
-Volumetric SLAM: 3D representation of physical structure
+    Volumetric SLAM: 3D representation of physical structure
 
-Feature based SLAM: Attempts to represent distinct landmarks
+    Monocular SLAM: Using only camera for SLAM
+
+    Feature based SLAM: Attempts to represent distinct landmarks
+
+Approach:
+1. Detect features across frames using opencv orb features
+    first, get u,v location of orbs, then circle them in the img
