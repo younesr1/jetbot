@@ -21,13 +21,13 @@ namespace CONFIG {
         constexpr uint16_t MAX_JS = 32767;
     }
     namespace MOTORCONTROLLER {
-        constexpr auto SLEEP = std::chrono::milliseconds(1);
+        constexpr auto SLEEP = std::chrono::microseconds(500);
     }
     namespace CAMERA {
         constexpr uint16_t WIDTH = 1280;
         constexpr uint16_t HEIGHT = 720;
         constexpr uint8_t FPS = 10;
         constexpr uint8_t FLIP = 4; // vertical flip
-        constexpr auto RECORDTIME = std::chrono::seconds(5);
+        constexpr auto RECORDTIME = std::chrono::seconds(20);
     }
 }

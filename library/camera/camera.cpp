@@ -33,5 +33,4 @@ void camera::record() {
         _video.write(_img);
     }
     std::cout << "Ending camera recording." << std::endl;
-    this->~camera();
 }
