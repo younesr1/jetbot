@@ -46,28 +46,21 @@ boost::optional<controller::motorSpeeds> controller::pollOnce() {
   if (sample(&_event))
   {
       if(_event.R2triggered() && !_event.isInitialState()) {
-        //std::cout << "R2 triggered with value: " << _event.value << std::endl;
-        _pf = ((_event.value / 32767.0) + 1) * 50;
-        // std::cout << "power factor = " << _pf << std::endl;
+        _pf = ((_event.value / 32767.0) + 1) * 25;
         newData = true;
       }
       else if(_event.leftJStriggered() && !_event.isInitialState()) {
-        //std::cout << "Left JS triggered with value: " << _event.value << std::endl;
         int8_t temp = 100 * _event.value / 32767.0;
         _lr = temp < 0 ? 100 + temp : 100;
         _rr = temp > 0 ? 100 - temp : 100;
-        //std::cout << "Left ratio = " << _lr << ", Right ratio = " << _rr << std::endl;
         newData = true;
       }
       else if(_event.L2triggered() && !_event.isInitialState()) {
-        //std::cout << "R2 triggered with value: " << _event.value << std::endl;
         _pf = ((_event.value / 32767.0) + 1) * 50 * -1;
-        // std::cout << "power factor = " << _pf << std::endl;
         newData = true;
       }
   }
   if(newData) {
-    //std::cout << "Left motor speed=  " << _lr*_pf/100 << "      Right motor speed = " << _rr*_pf/100 << std::endl;
     controller::motorSpeeds ret = {_lr*_pf/100, _rr*_pf/100};
     return ret;
   }
