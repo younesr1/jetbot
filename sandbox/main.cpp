@@ -4,6 +4,7 @@
 #include "opencv2/features2d.hpp"
 #include "opencv2/imgproc.hpp"
 #include <vector>
+#include "featureExtractor.h"
 using namespace  cv;
 using namespace std;
 
@@ -14,9 +15,6 @@ using namespace std;
 #define QUALITY 0.01
 #define MINDIST 10
 
-void color2gray(const Mat& frame, Mat& bwframe);
-void drawCircles(const vector<Point2f>& v, Mat& frame);
-void findFeaturePoints(const Mat& f, vector<Point2f>& v);
 
 int main(int argc, char **argv) {
     string file = "output.avi";
@@ -28,34 +26,19 @@ int main(int argc, char **argv) {
         cout << "Error opening video" << endl;
         return -1;
     }
-    vector<Point2f> points;
-    Mat frame;
-    while (true)
-    {
+    featureExtractor feature_extractor;
+    while (true) {
+        Mat frame;
         cap >> frame;
         if(frame.empty()) break;
-        findFeaturePoints(frame, points);
-        drawCircles(points, frame);
+        auto ret = feature_extractor.extractFeatures(frame);
+        for(KeyPoint const& i : ret.locators) {
+            circle(frame, i.pt, SIZE, GREEN);
+        }
         imshow("frame", frame);
         char c = (char) waitKey(25);
         if(c==27) break;
     }
     cap.release();
     destroyAllWindows();
-}
-
-void color2gray(const Mat& frame, Mat& bwframe) {
-    cvtColor(frame, bwframe, COLOR_BGR2GRAY);
-}
-
-void drawCircles(const vector<Point2f>& v, Mat& frame) {
-    for(Point2f const& i : v) {
-        circle(frame, i, SIZE, GREEN);
-    }
-}
-
-void findFeaturePoints(const Mat& f, vector<Point2f>& v) {
-    Mat bwf;
-    color2gray(f, bwf);
-    goodFeaturesToTrack(bwf, v, MAX_FEATURES, QUALITY, MINDIST);
 }
