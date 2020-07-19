@@ -11,13 +11,8 @@ using namespace std;
 #define GREEN {0,255,0}
 #define SIZE 2
 
-#define MAX_FEATURES 1000
-#define QUALITY 0.01
-#define MINDIST 10
-
-
 int main(int argc, char **argv) {
-    string file = "output.avi";
+    string file = "nyc.mp4";
     if(argc == 2) {
         file = argv[1];
     }
