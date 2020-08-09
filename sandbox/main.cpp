@@ -9,6 +9,7 @@ using namespace  cv;
 using namespace std;
 
 #define GREEN {0,255,0}
+#define BLUE {255,0,0}
 #define SIZE 2
 
 int main(int argc, char **argv) {
@@ -27,8 +28,8 @@ int main(int argc, char **argv) {
         cap >> frame;
         if(frame.empty()) break;
         auto ret = feature_extractor.extractFeatures(frame);
-        for(KeyPoint const& i : ret.locators) {
-            circle(frame, i.pt, SIZE, GREEN);
+        for(auto const& i : ret.keypoints) {
+            circle(frame,i.pt, SIZE, GREEN);
         }
         imshow("frame", frame);
         char c = (char) waitKey(25);
