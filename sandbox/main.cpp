@@ -28,9 +28,13 @@ int main(int argc, char **argv) {
         cap >> frame;
         if(frame.empty()) break;
         auto ret = feature_extractor.extractFeatures(frame);
-        for(auto const& i : ret.keypoints) {
-            circle(frame,i.pt, SIZE, GREEN);
+        for(auto const& i : ret.matchedKeypoints) {
+            if(!i.empty()) {
+                circle(frame,i.at(0).pt, SIZE, GREEN);
+                line(frame, i.at(0).pt, i.at(1).pt, BLUE);
+            }
         }
+        cout << (float) ret.matchedKeypoints.size() / (float) ret.matches.size() << endl;
         imshow("frame", frame);
         char c = (char) waitKey(25);
         if(c==27) break;

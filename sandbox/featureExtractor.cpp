@@ -20,37 +20,28 @@ featureExtractor::featureData featureExtractor::extractFeatures(const cv::Mat &f
     }
     //! DESCRIPTORS: From KeyPoints, generate descriptors
     _orb->compute(frame, keypoints, descriptor);
-    return featureData{keypoints};
-    #if false
     //! MATCHER: {table_number = 12, key_size = 6, multi_probe_level = 2} TODO try also 6,12,1
-    std::vector<std::vector<cv::Point2i>> matchedPoints;
-    std::vector<std::vector<cv::DMatch>> matches;
-    if(!_firstExtraction) {
-        cv::BFMatcher matcher = cv::BFMatcher(cv::NORM_HAMMING);
-        matcher.knnMatch(_prvsDescriptor, descriptor, matches, 2);
-        for(auto const& i : matches) {
-          if(i.at(0).distance < 0.75*i.at(1).distance)
-            matchedPoints.push_back(std::vector<cv::Point2i>{keypoints[i.at(0).queryIdx].pt, _prvsKeypoints[i.at(0).queryIdx].pt});
-        }
-
-    }
-    else {
+    if(_firstExtraction) {
         _firstExtraction = false;
+        _oldDescriptor = descriptor;
+        _oldKeypoints = keypoints;
+        return featureData{std::vector<std::vector<cv::KeyPoint>>(), std::vector<std::vector<cv::DMatch>>()};
     }
-    /*
-    # filter
-    if len(ret) > 0:
-      ret = np.array(ret)
-      model, inliers = ransac((ret[:, 0], ret[:, 1]),
-                              FundamentalMatrixTransform,
-                              min_samples=8,
-                              residual_threshold=1,
-                              max_trials=100)
-      ret = ret[inliers]
-    //! FILTERING: Only keep good matches
-    _prvsDescriptor = descriptor;*/
-    _prvsDescriptor = descriptor;
-    _prvsKeypoints = keypoints;
-    return featureData{matchedPoints};
-    #endif
+    cv::BFMatcher matcher(cv::NORM_HAMMING);
+    // -------------------------------------
+    // | {match1a} , {match2a} ... {matchNa} |
+    // | {match1b} , {match2b} ... {matchNb} |
+    // -------------------------------------
+    std::vector<std::vector<cv::DMatch>> matches;
+    matcher.knnMatch(descriptor, _oldDescriptor, matches, 2);
+    std::vector<std::vector<cv::KeyPoint>> matchedKeypoints;
+    for(auto const& i : matches) {
+        // ~30% of matches are filtered out for nyc video
+        if(i.at(0).distance < (0.75*i.at(1).distance)) {
+            matchedKeypoints.push_back(std::vector<cv::KeyPoint>{keypoints.at(i.at(0).queryIdx), _oldKeypoints.at(i.at(0).trainIdx)});
+        }
+    }
+    _oldDescriptor = descriptor;
+    _oldKeypoints = keypoints;
+    return featureData{matchedKeypoints, matches};
 }
