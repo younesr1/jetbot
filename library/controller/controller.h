@@ -14,8 +14,8 @@
 
 #pragma once
 
-#include "boost/optional.hpp"
 #include "config.h"
+#include <optional>
 #include <string>
 #include <iostream>
 
@@ -64,5 +64,5 @@ private:
 public:
   ~controller();
   controller();
-  boost::optional<motorSpeeds> pollOnce();
+  std::optional<motorSpeeds> pollOnce();
 };

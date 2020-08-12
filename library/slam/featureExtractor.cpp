@@ -1,3 +1,4 @@
+#include "config.h"
 #include "featureExtractor.h"
 #include "opencv2/imgproc.hpp"
 
@@ -13,19 +14,19 @@ featureExtractor::featureData featureExtractor::extractFeatures(const cv::Mat &f
     std::vector<cv::KeyPoint> keypoints;
     cv::Mat descriptor;
     //! LOCATORS: Find good features to track
-    cv::goodFeaturesToTrack(bwFrame, tempPoints, _maxFeatures, _rejectionRegion, _minDist);
+    cv::goodFeaturesToTrack(bwFrame, tempPoints, CONFIG::SLAM::MAXFEATURES, CONFIG::SLAM::REJECTIONREGION, CONFIG::SLAM::MINDIST);
     // Convert found points to KeyPoints
     for(cv::Point2f const& i : tempPoints) {
-        keypoints.push_back(cv::KeyPoint(i, _keyPointDiameter));
+        keypoints.push_back(cv::KeyPoint(i, CONFIG::SLAM::KPDIAMETER));
     }
     //! DESCRIPTORS: From KeyPoints, generate descriptors
     _orb->compute(frame, keypoints, descriptor);
-    //! MATCHER: {table_number = 12, key_size = 6, multi_probe_level = 2} TODO try also 6,12,1
+    //! MATCHER:
     if(_firstExtraction) {
         _firstExtraction = false;
         _oldDescriptor = descriptor;
         _oldKeypoints = keypoints;
-        return featureData{std::vector<std::vector<cv::KeyPoint>>(), std::vector<std::vector<cv::DMatch>>()};
+        return featureData{std::vector<std::vector<cv::KeyPoint>>()};
     }
     cv::BFMatcher matcher(cv::NORM_HAMMING);
     // -------------------------------------
@@ -33,7 +34,7 @@ featureExtractor::featureData featureExtractor::extractFeatures(const cv::Mat &f
     // | {match1b} , {match2b} ... {matchNb} |
     // -------------------------------------
     std::vector<std::vector<cv::DMatch>> matches;
-    matcher.knnMatch(descriptor, _oldDescriptor, matches, 2);
+    matcher.knnMatch(descriptor, _oldDescriptor, matches, CONFIG::SLAM::KNNDIMENSION);
     std::vector<std::vector<cv::KeyPoint>> matchedKeypoints;
     for(auto const& i : matches) {
         // ~30% of matches are filtered out for nyc video
@@ -44,5 +45,5 @@ featureExtractor::featureData featureExtractor::extractFeatures(const cv::Mat &f
     //! RANSAC: Use RANSAC algorithm to filter out outliers: SKIPPED since no RANSAC for cpp
     _oldDescriptor = descriptor;
     _oldKeypoints = keypoints;
-    return featureData{matchedKeypoints, matches};
+    return featureData{matchedKeypoints};
 }

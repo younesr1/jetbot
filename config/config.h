@@ -30,4 +30,13 @@ namespace CONFIG {
         constexpr uint8_t FLIP = 4; // vertical flip
         constexpr auto RECORDTIME = std::chrono::seconds(20);
     }
+    namespace SLAM {
+        constexpr uint16_t MAC_FEATURES = 3000;
+        constexpr uint8_t MINDIST = 3;
+        constexpr uint8_t KNNDIMENSION = 2;
+        constexpr uint8_t KPDIAMETER = 20;
+        constexpr float REJECTIONREGION = 0.01F;
+        constexpr float FILTERINGTHRESHOLD = 0.02F;
+        constexpr float RATIO = 0.60f;
+    }
 }

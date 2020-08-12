@@ -41,7 +41,7 @@ bool controller::sample(controllerEvent* controllerEvent)
   return bytes == sizeof(*controllerEvent);
 }
 
-boost::optional<controller::motorSpeeds> controller::pollOnce() {
+std::optional<controller::motorSpeeds> controller::pollOnce() {
   bool newData = false;
   if (sample(&_event))
   {
@@ -64,7 +64,7 @@ boost::optional<controller::motorSpeeds> controller::pollOnce() {
     controller::motorSpeeds ret = {_lr*_pf/100, _rr*_pf/100};
     return ret;
   }
-  return boost::none; 
+  return std::nullopt;
 }
 
 controller::~controller() {
