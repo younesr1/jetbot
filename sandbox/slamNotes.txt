@@ -18,3 +18,13 @@ Approach:
     Find locators with goodFeaturestoTrack()
     From locators, determine descriptors with orb::compute(). ORB is a binary string descriptor.
     Use FLANN based matcher to match features across frames
+2. Matcher
+    Use FLANN based matcher to match features across frames
+    Use the ratio test to filter bad matches :
+        The distance ratio between the two nearest matches of a considered keypoint is computed and it is a good match
+        when this value is below a threshold. Indeed, this ratio allows helping to discriminate between ambiguous
+        matches (distance ratio between the two nearest neighbors is close to one) and well discriminated matches.
+    Use RANSAC to further filter out bad matches: SKIPPED SINCE NO RANSAC ALGORITHM FOR CPP
+        Outlier filtering algorithm, which takes in data, produces a model. Anything well described by the model is an
+        inlier. Anything poorly described is an outlier. Accuracy is proportional to max iterations allowed
+        for finding the model.

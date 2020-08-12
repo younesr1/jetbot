@@ -37,10 +37,11 @@ featureExtractor::featureData featureExtractor::extractFeatures(const cv::Mat &f
     std::vector<std::vector<cv::KeyPoint>> matchedKeypoints;
     for(auto const& i : matches) {
         // ~30% of matches are filtered out for nyc video
-        if(i.at(0).distance < (0.75*i.at(1).distance)) {
+        if(i.at(0).distance < (0.6*i.at(1).distance)) {
             matchedKeypoints.push_back(std::vector<cv::KeyPoint>{keypoints.at(i.at(0).queryIdx), _oldKeypoints.at(i.at(0).trainIdx)});
         }
     }
+    //! RANSAC: Use RANSAC algorithm to filter out outliers: SKIPPED since no RANSAC for cpp
     _oldDescriptor = descriptor;
     _oldKeypoints = keypoints;
     return featureData{matchedKeypoints, matches};

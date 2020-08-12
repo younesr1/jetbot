@@ -1,2 +1,4 @@
 # ignore vscode stuff
 .vscode
+#ignore clion stuff
+.idea/vcs.xml
