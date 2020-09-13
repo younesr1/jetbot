@@ -14,28 +14,26 @@
 
 #include "controller.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
+#include "unistd.h"
 #include <fcntl.h>
 #include <iostream>
-#include <string>
 #include <sstream>
-#include "unistd.h"
+#include <string>
+#include <sys/stat.h>
+#include <sys/types.h>
 
-controller::controller() : _pf(0), _lr(100), _rr(100)
-{
+controller::controller() : _pf(0), _lr(100), _rr(100) {
   std::string devicePath = "/dev/input/js0";
   // Open the device using either blocking or non-blocking
   _fd = open(devicePath.c_str(), O_RDONLY | O_NONBLOCK);
-  if(!(_fd >= 0)) {
+  if (!(_fd >= 0)) {
     printf("open failed.\n");
     exit(1);
   }
 }
 
-bool controller::sample(controllerEvent* controllerEvent)
-{
-  int bytes = read(_fd, controllerEvent, sizeof(*controllerEvent)); 
+bool controller::sample(controllerEvent *controllerEvent) {
+  int bytes = read(_fd, controllerEvent, sizeof(*controllerEvent));
   if (bytes == -1)
     return false;
   return bytes == sizeof(*controllerEvent);
@@ -43,30 +41,25 @@ bool controller::sample(controllerEvent* controllerEvent)
 
 std::optional<controller::motorSpeeds> controller::pollOnce() {
   bool newData = false;
-  if (sample(&_event))
-  {
-      if(_event.R2triggered() && !_event.isInitialState()) {
-        _pf = ((_event.value / 32767.0) + 1) * 25;
-        newData = true;
-      }
-      else if(_event.leftJStriggered() && !_event.isInitialState()) {
-        int8_t temp = 100 * _event.value / 32767.0;
-        _lr = temp < 0 ? 100 + temp : 100;
-        _rr = temp > 0 ? 100 - temp : 100;
-        newData = true;
-      }
-      else if(_event.L2triggered() && !_event.isInitialState()) {
-        _pf = ((_event.value / 32767.0) + 1) * 50 * -1;
-        newData = true;
-      }
+  if (sample(&_event)) {
+    if (_event.R2triggered() && !_event.isInitialState()) {
+      _pf = ((_event.value / 32767.0) + 1) * 25;
+      newData = true;
+    } else if (_event.leftJStriggered() && !_event.isInitialState()) {
+      int8_t temp = 100 * _event.value / 32767.0;
+      _lr = temp < 0 ? 100 + temp : 100;
+      _rr = temp > 0 ? 100 - temp : 100;
+      newData = true;
+    } else if (_event.L2triggered() && !_event.isInitialState()) {
+      _pf = ((_event.value / 32767.0) + 1) * 50 * -1;
+      newData = true;
+    }
   }
-  if(newData) {
-    controller::motorSpeeds ret = {_lr*_pf/100, _rr*_pf/100};
+  if (newData) {
+    controller::motorSpeeds ret = {_lr * _pf / 100, _rr * _pf / 100};
     return ret;
   }
   return std::nullopt;
 }
 
-controller::~controller() {
-  close(_fd);
-}
+controller::~controller() { close(_fd); }

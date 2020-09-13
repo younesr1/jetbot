@@ -1,22 +1,23 @@
+# TODO MOVE TO CMAKE!!
+
 # PATHS
 BUILD_FOLDER := build
-APPS_FOLDER := apps
+APP_FOLDER := app
 LIBRARY_FOLDER := library
 CONTROLLER_FOLDER := controller
 MOTOR_FOLDER:= motor
 CONFIG_FOLER := config
 CAMERA_FOLDER := camera
-SLAM_FOLDER : slam
-MOTORCONTROLLER_FOLDER := motor_controller
+SLAM_FOLDER := slam
 LIB_PATH := $(LIBRARY_FOLDER)
 BUILD_PATH := $(BUILD_FOLDER)
-APPS_PATH := $(APPS_FOLDER)
+APP_PATH := $(APP_FOLDER)
 CONTROLLER_PATH := $(LIB_PATH)/$(CONTROLLER_FOLDER)
 MOTOR_PATH := $(LIB_PATH)/$(MOTOR_FOLDER)
 CAMERA_PATH := $(LIB_PATH)/$(CAMERA_FOLDER)
 MOTORCONTROLLER_PATH := $(LIB_PATH)/$(MOTORCONTROLLER_FOLDER)
+SLAM_PATH := $(LIB_PATH)/$(SLAM_FOLDER)
 CONFIG_PATH := $(CONFIG_FOLER)
-SLAM_PATH := $(SLAM_FOLDER)
 OPENCV_PATH := /usr/include/opencv4
 # COMPILATION
 CPP = g++ -std=c++17
@@ -38,7 +39,6 @@ OBJS += $(BUILD_PATH)/drivetrain.o
 OBJS += $(BUILD_PATH)/i2cdevice.o
 OBJS += $(BUILD_PATH)/pwm.o
 OBJS += $(BUILD_PATH)/camera.o
-OBJS += $(BUILD_PATH)/motor_controller.o
 OBJS += $(BUILD_PATH)/featureExtractor.o
 
 #THREADING
@@ -48,17 +48,15 @@ WARNALL := -Wall
 
 ################################################################################################################################################
 jetbot: $(OBJS) $(BUILD_PATH)/jetbot.o
-	# TODO: Understand the libs im compiling and place them in vars
 	$(CPP) $^ -o $(BUILD_PATH)/$@.run $(THREAD_LIB) `pkg-config --cflags --libs opencv`
-	# -L/usr/lib -lopencv_core -lopencv_highgui -lopencv_videoio
 	+@echo "====================================================="
 	+@echo "=============== Compiled Successfuly ================"
 	+@echo "====================================================="
 
-$(BUILD_PATH)/jetbot.o: $(APPS_PATH)/jetbot.cpp
+$(BUILD_PATH)/jetbot.o: $(APP_PATH)/jetbot.cpp
 	mkdir $(BUILD_FOLDER)
 	+@echo "Compile: jetbot.cpp"
-	$(CPP) -c $(APPS_PATH)/jetbot.cpp $(INCLUDES) -o $@ $(WARNALL)
+	$(CPP) -c $(APP_PATH)/jetbot.cpp $(INCLUDES) -o $@ $(WARNALL)
 
 $(BUILD_PATH)/controller.o: $(CONTROLLER_PATH)/controller.cpp $(CONTROLLER_PATH)/controller.h
 	+@echo "Compile: controller.cpp"
@@ -88,12 +86,8 @@ $(BUILD_PATH)/camera.o: $(CAMERA_PATH)/camera.cpp $(CAMERA_PATH)/camera.h
 	+@echo "Compile: camera.cpp"
 	$(CPP) -c $< $(INCLUDES) -o $@ $(WARNALL)
 
-$(BUILD_PATH)/motor_controller.o: $(MOTORCONTROLLER_PATH)/motor_controller.cpp $(MOTORCONTROLLER_PATH)/motor_controller.h 
-	+@echo "Compile: motor_controller.cpp"
-	$(CPP) -c $< $(INCLUDES) -o $@ $(WARNALL)
-
 $(BUILD_PATH)/featureExtractor.o: $(SLAM_PATH)/featureExtractor.cpp $(SLAM_PATH)/featureExtractor.h
-	+@echo "Compile: motor_controller.cpp"
+	+@echo "Compile: featureExtractor.cpp"
 	$(CPP) -c $< $(INCLUDES) -o $@ $(WARNALL)
 
 clean:

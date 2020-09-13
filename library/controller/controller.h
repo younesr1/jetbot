@@ -17,29 +17,20 @@
 #include "config.h"
 #include <optional>
 #include <string>
-#include <iostream>
-
-#define JS_EVENT_BUTTON 0x01 // button pressed/released
-#define JS_EVENT_AXIS   0x02 // controller moved
-#define JS_EVENT_INIT   0x80 // initial state of device
 
 /**
  * Represents a controller device. Allows data to be sampled from it.
  */
 class controller {
 private:
-  struct controllerEvent {
-    //static const int16_t MIN_AXES_VALUE = -32768;
-    //static const int16_t MAX_AXES_VALUE = 32767;
+  typedef struct controllerEvent {
     uint32_t time;
     short value;
     uint8_t type;
     uint8_t number;
-    bool isAxis() {
-      return (type & JS_EVENT_AXIS) != 0;
-    }
+    bool isAxis() { return (type & CONFIG::CONTROLLER::JS_EVENT_AXIS) != 0; }
     bool isInitialState() {
-      return (type & JS_EVENT_INIT) != 0;
+      return (type & CONFIG::CONTROLLER::JS_EVENT_INIT) != 0;
     }
     bool R2triggered() {
       return isAxis() && (number == CONFIG::CONTROLLER::R2);
@@ -50,17 +41,18 @@ private:
     bool leftJStriggered() {
       return isAxis() && (number == CONFIG::CONTROLLER::LEFTJSX);
     }
-  };
-  struct motorSpeeds {
+  } controllerEvent;
+  typedef struct motorSpeeds {
     int32_t motorLeftSpeed;
     int32_t motorRightSpeed;
-  };
+  } motorSpeeds;
   int32_t _fd;
   int32_t _pf;
   int32_t _lr;
   int32_t _rr;
   controllerEvent _event;
-  bool sample(controllerEvent* controllerEvent);
+  bool sample(controllerEvent *controllerEvent);
+
 public:
   ~controller();
   controller();

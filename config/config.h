@@ -38,5 +38,6 @@ namespace CONFIG {
         constexpr float REJECTIONREGION = 0.01F;
         constexpr float FILTERINGTHRESHOLD = 0.02F;
         constexpr float RATIO = 0.60f;
+        constexpr uint8_t FEATURECIRCLESIZE  = 2;
     }
 }
