@@ -34,8 +34,8 @@ int main(int argc, char **argv) {
                 line(frame, i.at(0).pt, i.at(1).pt, BLUE);
             }
         }
-        cout << ret.matchedKeypoints.size() << endl;
-        cout << (float) ret.matchedKeypoints.size() / (float) ret.matches.size() << endl;
+        cout << cap.get(CV_CAP_PROP_FPS) << endl;
+        cout << ret.retention_ratio << endl;
         imshow("frame", frame);
         char c = (char) waitKey(25);
         if(c==27) break;

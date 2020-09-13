@@ -25,7 +25,7 @@ featureExtractor::featureData featureExtractor::extractFeatures(const cv::Mat &f
         _firstExtraction = false;
         _oldDescriptor = descriptor;
         _oldKeypoints = keypoints;
-        return featureData{std::vector<std::vector<cv::KeyPoint>>(), std::vector<std::vector<cv::DMatch>>()};
+        return featureData{std::vector<std::vector<cv::KeyPoint>>(), 0};
     }
     cv::BFMatcher matcher(cv::NORM_HAMMING);
     // -------------------------------------
@@ -44,5 +44,5 @@ featureExtractor::featureData featureExtractor::extractFeatures(const cv::Mat &f
     //! RANSAC: Use RANSAC algorithm to filter out outliers: SKIPPED since no RANSAC for cpp
     _oldDescriptor = descriptor;
     _oldKeypoints = keypoints;
-    return featureData{matchedKeypoints, matches};
+    return featureData{matchedKeypoints, ((float)matchedKeypoints.size())/matches.size()};
 }

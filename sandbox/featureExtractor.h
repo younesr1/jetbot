@@ -8,8 +8,7 @@ public:
     struct featureData {
         // this is returned from the 0.75 ratio test
         std::vector<std::vector<cv::KeyPoint>> matchedKeypoints;
-        // this is return from the knn matcher
-        std::vector<std::vector<cv::DMatch>> matches;
+        float retention_ratio;
     };
     featureExtractor();
     // ~featureExtractor();
