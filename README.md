@@ -3,7 +3,8 @@
 The goal of this personal project was to learn more about openCV and a fundamental computer vision problems in Robotics, SLAM. Loosely, the Simultaneous Localization and Mapping (SLAM) problem is one where an agent looks to create a map of its environment while estimating its pose within that environment. Specifically, Monocular SLAM relies solely on the cameraSo far, I have been able to locate discernible features in video frames and track their motion across frames. At this point, I have yet to start working on pose estimation of the rover.
 
 # Summary
-I have written code that identifies, filters and tracks features across frames on the Nvidia Jetbot. I put the Jetbot on my dashboard and drove around. Green circles represent the features the algorithm is tracking. Blue lines connect the  location of a feature in the previous frame to its location in the current frame. Consequently, very short blue lines indicate accurate feature tracking, while long cross-frame blue lines indicate noise. Here is the output: **ADD GIF**
+I have written code that identifies, filters and tracks features across frames on the Nvidia Jetbot. I put the Jetbot on my dashboard and drove around. Green circles represent the features the algorithm is tracking. Blue lines connect the  location of a feature in the previous frame to its location in the current frame. Consequently, very short blue lines indicate accurate feature tracking, while long cross-frame blue lines indicate noise. Here is the output:
+![](images/extracted_features.gif)
 
 # Assembly
 
