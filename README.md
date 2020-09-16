@@ -8,7 +8,7 @@ I have written code that identifies, filters and tracks features across frames o
 # Assembly
 
 For this project, I assembled the Jetbot, Nvidia's hobbyist robotics platform based on the Jetson Nano. Nvidia conveniently shares the assembly instructions for the robot along with the CAD for the chassis. I 3D printed the chassis through an online service and sourced most of the parts from amazon. The Jetbot consists of a rechargeable battery, a motor driver, 2 motors, and a 160° FOV Raspberry Pi Camera.
-**ADD IMAGE**
+![](images/jetbot.jpg)
 
 # Control
 
