@@ -1,19 +1,23 @@
 #!/usr/bin/python3
 from featherwing import FeatherWing
 import rospy
-from std_msgs import Float64MultiArray
+from std_msgs import Float64
 
 fw = FeatherWing()
 
 
-def Update(speeds):
-    fw.SetLeftMotorSpeed(speeds[0])
-    fw.SetRightMotorSpeed(speeds[1])
+def UpdateLeft(speed):
+    fw.SetLeftMotorSpeed(speed)
+
+
+def UpdateRight(speed):
+    fw.SetRightMotorSpeed(speed)
 
 
 def consumer():
     rospy.init_node("motor_driver")
-    rospy.Subscriber("drivetrain", Float64MultiArray, Update)
+    rospy.Subscriber("/drivetrain/left", Float64, UpdateLeft)
+    rospy.Subscriber("/drivetrain/right", Float64, UpdateRight)
 
 
 def main():
