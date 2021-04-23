@@ -3,69 +3,74 @@
 #include <limits>
 #include <mutex>
 
-class Gamepad
+namespace IO
 {
-private:
-    using JoystickReading = std::array<double, 2>; // [-100, 100]
-    using TriggerReading = double;                 // [0, 100]
-    using ButtonReading = bool;
-    using Resolution = int16_t;
-
-    struct GamepadReading
+    /* A oop driver for a dualshock-ps4 controller */
+    class Gamepad
     {
-        Resolution left_js_x = 0, left_js_y = 0;
-        Resolution right_js_x = 0, right_js_y = 0;
-        Resolution right_trigger = std::numeric_limits<Resolution>::min();
-        Resolution left_trigger = std::numeric_limits<Resolution>::min();
-    };
+    private:
+        using JoystickReading = std::array<double, 2>; // [-100, 100]
+        using TriggerReading = double;                 // [0, 100]
+        using ButtonReading = bool;
+        using Resolution = int16_t;
 
-    struct GamepadEvent {
-        uint32_t time;
-        Resolution data;
-        uint8_t type;
-        uint8_t id;
-    };
+        struct GamepadReading
+        {
+            Resolution left_js_x = 0, left_js_y = 0;
+            Resolution right_js_x = 0, right_js_y = 0;
+            Resolution right_trigger = std::numeric_limits<Resolution>::min();
+            Resolution left_trigger = std::numeric_limits<Resolution>::min();
+        };
 
-    GamepadReading m_last_reading;
+        struct GamepadEvent
+        {
+            uint32_t time;
+            Resolution data;
+            uint8_t type;
+            uint8_t id;
+        };
 
-    int32_t m_fd;
+        GamepadReading m_last_reading;
 
-    std::mutex m_mutex;
+        int32_t m_fd;
 
-    /* Updates m_last_reading value */
-    void Update(const GamepadEvent &event);
+        std::mutex m_mutex;
 
-public:
-    Gamepad();
-    ~Gamepad();
+        /* Updates m_last_reading value */
+        void Update(const GamepadEvent &event);
 
-    /**
+    public:
+        Gamepad();
+        ~Gamepad();
+
+        /**
     * @brief Updates internal data structure. Should run in its own thread
     * @return success
     */
-    bool Update();
+        bool Update();
 
-    /**
+        /**
     * @brief Read the left joystick value from internal data structure
     * @param reading {x-axis, y-axis} [-100, 100]
     */
-    JoystickReading ReadLeftJoystick();
+        JoystickReading ReadLeftJoystick() const;
 
-    /**
+        /**
     * @brief Read the right joystick from internal data structure
     * @param reading {x-axis, y-axis} [-100, 100]
     */
-    JoystickReading ReadRightJoystick();
+        JoystickReading ReadRightJoystick() const;
 
-    /**
+        /**
     * @brief Read the right trigger from internal data structure
     * @param reading 0 is unpressed, 100 is fully pressed
     */
-    TriggerReading ReadRightTrigger();
+        TriggerReading ReadRightTrigger() const;
 
-    /**
+        /**
     * @brief Read the left trigger from internal data structure
     * @param reading 0 is unpressed 100 is fully pressed
     */
-    TriggerReading ReadLeftTrigger();
-};
+        TriggerReading ReadLeftTrigger() const;
+    };
+}
