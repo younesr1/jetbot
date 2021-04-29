@@ -1,11 +1,12 @@
 #pragma once
 #include <opencv2/opencv.hpp>
 #include <cstdint>
+#include <string>
 
 namespace Vision {
 class RaspiCam {
     public:
-    RaspiCam(uint16_t width, uint16_t height, uint8_t fps);
+    RaspiCam(uint16_t capture_width, uint16_t capture_height, uint16_t display_width, uint16_t display_height, uint8_t fps);
     ~RaspiCam();
 
     /**
@@ -16,6 +17,6 @@ class RaspiCam {
 
     private:
     cv::VideoCapture m_capture;
-    static auto GetPipeline(uint16_t width, uint16_t height, uint8_t fps);
+    static std::string GetPipeline(uint16_t capture_width, uint16_t capture_height, uint16_t display_width, uint16_t display_height, uint8_t fps);
 };
 }
