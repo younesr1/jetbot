@@ -5,7 +5,8 @@ project(camera)
 add_compile_options(-std=c++17)
 
 ## Declare path to OpenCVConfig.cmake
-set(OpenCV_DIR /usr/lib/x86_64-linux-gnu/cmake/opencv4/)
+EXECUTE_PROCESS( COMMAND uname -m COMMAND tr -d '\n' OUTPUT_VARIABLE ARCHITECTURE )
+set(OpenCV_DIR /usr/lib/${ARCHITECTURE}-linux-gnu/cmake/opencv4/)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
