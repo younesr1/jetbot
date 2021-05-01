@@ -13,7 +13,7 @@ RUN sudo apt-get install build-essential cmake git pkg-config libgtk-3-dev \
     libxvidcore-dev libx264-dev libjpeg-dev libpng-dev libtiff-dev \
     gfortran openexr libatlas-base-dev python3-dev python3-numpy \
     libtbb2 libtbb-dev libdc1394-22-dev libopenexr-dev \
-    libgstreamer-plugins-base1.0-dev libgstreamer1.0-dev
+    libgstreamer-plugins-base1.0-dev libgstreamer1.0-dev -y
 # Clone OpenCV repo
 RUN mkdir /root/opencv_build && cd /root/opencv_build && \
     git clone https://github.com/opencv/opencv.git --branch '4.2.0' --depth 1
