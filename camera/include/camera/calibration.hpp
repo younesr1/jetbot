@@ -6,6 +6,7 @@ fx    0    cx
 0     fy   cy 
 0     0    1 
 */
-namespace Vision {
+namespace Vision
+{
     const cv::Mat intrinsic;
 }

@@ -12,9 +12,7 @@ namespace IO
         m_fd = open(path, O_RDONLY);
         if (m_fd == -1)
         {
-            // younes todo this gives what():  filesystem error: No gamepads detected: Success [/dev/input/js0]
-            // customize error code
-            throw std::filesystem::filesystem_error("No gamepads detected", path, std::error_code());
+            throw std::filesystem::filesystem_error("No gamepads detected", path, std::error_code(2, std::system_category()));
         }
     }
 
