@@ -12,6 +12,10 @@ objp[:, :2] = np.mgrid[0:cols, 0:rows].T.reshape(-1, 2)
 objpoints = []  # 3d point in real world space
 imgpoints = []  # 2d points in image plane.
 images = glob.glob('images/*.jpg')
+
+distortions = []
+intrinsics = []
+
 for fname in images:
     #print("##############################################################")
     img = cv.imread(fname)
@@ -29,10 +33,13 @@ for fname in images:
         # undistort
         dst = cv.undistort(img, mtx, dist, None, None)
         comp = np.concatenate((img, dst), axis=1)
-        np.savetxt("intrinsics.txt", mtx)
-        np.savetxt("distortions.txt", dist)
+        distortions.append(dist)
+        intrinsics.append(mtx)        
         cv.imshow("Comparison", comp)
         cv.waitKey(0)
     else:
         print("Failed")
 cv.destroyAllWindows()
+
+print(np.median(distortions, axis=0))
+print(np.median(intrinsics, axis=0))

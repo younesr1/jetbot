@@ -1,4 +1,5 @@
 #include "camera/raspi_cam.hpp"
+#include "camera/calibration.hpp"
 
 #include <filesystem>
 #include <string>
@@ -29,7 +30,8 @@ namespace Vision
     {
         cv::Mat frame;
         m_capture.read(frame);
-        // younes todo undistort
-        return frame;
+        cv::Mat ret;
+        cv::undistort(frame, ret, Vision::Calibration::Distortions, Vision::Calibration::Intrinsics);
+        return ret;
     }
 } // namespace Vision
