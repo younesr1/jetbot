@@ -4,9 +4,13 @@ project(camera)
 ## Compile as C++17, supported in ROS Kinetic and newer
 add_compile_options(-std=c++17)
 
-## Declare path to OpenCVConfig.cmake
+## Declare path to OpenCVConfig.cmake which differs between Jetbot and Dell laptop
 EXECUTE_PROCESS( COMMAND uname -m COMMAND tr -d '\n' OUTPUT_VARIABLE ARCHITECTURE )
-set(OpenCV_DIR /usr/lib/${ARCHITECTURE}-linux-gnu/cmake/opencv4/)
+if(${ARCHITECTURE} STREQUAL "x86_64")
+  set(OpenCV_DIR /usr/lib/x86_64-linux-gnu/cmake/opencv4/)
+else()
+  set(OpenCV_DIR /usr/local/lib/cmake/opencv4/)
+endif()
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
