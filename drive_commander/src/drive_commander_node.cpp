@@ -42,8 +42,8 @@ Commander::Commander()
 
 void Commander::advertise()
 {
-    ros::Publisher twist_pub = m_nh.advertise<geometry_msgs::Twist>(m_twist_topic, m_buffer_size);
-    ros::Subscriber joy_sub = m_nh.subscribe(m_joy_topic, m_buffer_size, &Commander::cb, this);
+    m_twist_pub = m_nh.advertise<geometry_msgs::Twist>(m_twist_topic, m_buffer_size);
+    m_joy_sub = m_nh.subscribe(m_joy_topic, m_buffer_size, &Commander::cb, this);
 }
 
 void Commander::cb(const sensor_msgs::Joy::ConstPtr &msg)
@@ -59,9 +59,9 @@ void Commander::cb(const sensor_msgs::Joy::ConstPtr &msg)
     twist_msg.linear.x = linear * deadman;
     twist_msg.linear.y = 0;
     twist_msg.linear.z = 0;
-    twist_msg.linear.x = 0;
-    twist_msg.linear.y = 0;
-    twist_msg.linear.z = angular * deadman;
+    twist_msg.angular.x = 0;
+    twist_msg.angular.y = 0;
+    twist_msg.angular.z = angular * deadman;
     m_twist_pub.publish(twist_msg);
     ROS_INFO("Published twist message");
 }

@@ -32,17 +32,15 @@ int main(int argc, char **argv)
 
     while (ros::ok())
     {
-        if (gamepad.Update())
-        {
-            auto state = gamepad.Read();
-            sensor_msgs::Joy msg;
-            msg.axes.clear();
-            msg.buttons.clear();
-            msg.axes = {state.left_js[0], state.left_js[1], state.right_js[0], state.right_js[1], state.left_trigger, state.right_trigger};
-            msg.buttons = {state.left_bumper, state.right_bumper, state.triangle_button, state.circle_button, state.x_button, state.square_button};
-            pub.publish(msg);
-            ROS_INFO("Published Gamepad State");
-        }
+        gamepad.Update();
+        auto state = gamepad.Read();
+        sensor_msgs::Joy msg;
+        msg.axes.clear();
+        msg.buttons.clear();
+        msg.axes = {state.left_js[0], state.left_js[1], state.right_js[0], state.right_js[1], state.left_trigger, state.right_trigger};
+        msg.buttons = {state.left_bumper, state.right_bumper, state.triangle_button, state.circle_button, state.x_button, state.square_button};
+        pub.publish(msg);
+        ROS_INFO("Published Gamepad State");
 
         ros::spinOnce();
         loop_rate.sleep();
