@@ -1,21 +1,33 @@
 #include "gamepad/gamepad.hpp"
 #include <ros/ros.h>
-#include "gamepad/GamepadState.h"
-#include "motor_driver/MotorSpeeds.h"
+#include <sensor_msgs/Joy.h>
+#include <chrono>
+#include <thread>
 
-constexpr auto FREQUENCY = 50, BUFFER_SIZE = 1;
+using namespace std::chrono_literals;
 
 int main(int argc, char **argv)
 {
-    IO::Gamepad gamepad;
-
     ros::init(argc, argv, "gamepad");
     ros::NodeHandle nh;
 
-    ros::Publisher motors_publisher = nh.advertise<motor_driver::MotorSpeeds>("/drivetrain", BUFFER_SIZE);
-    ros::Publisher gamepad_publisher = nh.advertise<gamepad::GamepadState>("/gamepad", BUFFER_SIZE);
+    std::string topic, path;
+    int frequency, buffer_size;
 
-    ros::Rate loop_rate(FREQUENCY);
+    nh.getParam("topic", topic);
+    nh.getParam("path", path);
+    nh.getParam("frequency", frequency);
+    nh.getParam("buffer_size", buffer_size);
+
+    ros::Rate loop_rate(frequency);
+    ros::Publisher pub = nh.advertise<sensor_msgs::Joy>(topic, buffer_size);
+
+    IO::Gamepad gamepad(path);
+    while (!gamepad.Connect() && ros::ok())
+    {
+        ROS_WARN("Unable to find PS4 controller. Trying again in 2 seconds");
+        std::this_thread::sleep_for(2s);
+    }
 
     while (ros::ok())
     {
@@ -23,20 +35,13 @@ int main(int argc, char **argv)
         {
             ROS_WARN("Failed to update gamepad");
         }
-        gamepad::GamepadState gamepad_msg;
-        gamepad_msg.left_js_x = gamepad.ReadLeftJoystick()[0];
-        gamepad_msg.left_js_y = gamepad.ReadLeftJoystick()[1];
-        gamepad_msg.right_js_x = gamepad.ReadRightJoystick()[0];
-        gamepad_msg.right_js_y = gamepad.ReadRightJoystick()[1];
-        gamepad_msg.left_trigger = gamepad.ReadLeftTrigger();
-        gamepad_msg.right_trigger = gamepad.ReadRightTrigger();
-        gamepad_publisher.publish(gamepad_msg);
-
-        motor_driver::MotorSpeeds speeds_msg;
-        const double power_factor = (gamepad.ReadRightTrigger() != 0 ? gamepad.ReadRightTrigger() : -1 * gamepad.ReadLeftTrigger()) / 100.0;
-        speeds_msg.left = power_factor * (gamepad.ReadLeftJoystick()[0] > 0 ? 100.0 : 100 + gamepad.ReadLeftJoystick()[0]);
-        speeds_msg.right = power_factor * (gamepad.ReadRightJoystick()[0] < 0 ? 100.0 : 100 - gamepad.ReadRightJoystick()[0]);
-        motors_publisher.publish(speeds_msg);
+        auto state = gamepad.Read();
+        sensor_msgs::Joy msg;
+        msg.axes.clear();
+        msg.buttons.clear();
+        msg.axes = {state.left_js[0], state.left_js[1], state.right_js[0], state.right_js[1], state.left_trigger, state.right_trigger};
+        msg.buttons = {state.left_bumper, state.right_bumper, state.triangle_button, state.circle_button, state.x_button, state.square_button};
+        pub.publish(msg);
 
         ros::spinOnce();
         loop_rate.sleep();

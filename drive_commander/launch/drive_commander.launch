@@ -1,0 +1,9 @@
+<launch>
+  <node name="commander" pkg="drive_commander" type="node" >
+    <param name="joy_topic" type="string" value="/gamepad/data" />
+    <param name="twist_topic" type="string" value="/cmd_vel" />
+    <param name="max_angular_speed" type="double" value="0.524" />
+    <param name="max_linear_speed" type="double" value="10.0" />
+    <param name="buffer_size" type="int" value="10" />
+  </node>
+</launch>
