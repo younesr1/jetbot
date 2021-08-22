@@ -11,7 +11,7 @@ namespace IO
 
     bool Gamepad::Connect()
     {
-        m_fd = open(m_path.c_str(), O_RDONLY);
+        m_fd = open(m_path.c_str(), O_RDONLY | O_NONBLOCK);
         return m_fd != -1;
     }
 
@@ -84,6 +84,14 @@ namespace IO
             else if (event.id == TRIANGLE_BUTTON)
             {
                 m_last_reading.triangle_button = event.data;
+            }
+            else if (event.id == RIGHT_BUMPER)
+            {
+                m_last_reading.right_bumper = event.data;
+            }
+            else if (event.id == LEFT_BUMPER)
+            {
+                m_last_reading.left_bumper = event.data;
             }
         }
     }

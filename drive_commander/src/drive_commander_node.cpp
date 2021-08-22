@@ -3,10 +3,6 @@
 #include <geometry_msgs/Twist.h>
 #include <limits>
 
-constexpr auto BUFFER_SIZE = 10;
-constexpr auto SUBSCRIBE_TOPIC = "/gamepad/data", PUBLISH_TOPIC = "/cmd_vel";
-constexpr auto MAX_LINEAR = 10, MAX_ANGULAR = 30;
-
 class Commander
 {
 private:
@@ -28,6 +24,7 @@ public:
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "drive_commander");
+    ros::NodeHandle nh;
     Commander cmder;
     cmder.advertise();
     ros::spin();
@@ -36,11 +33,11 @@ int main(int argc, char **argv)
 
 Commander::Commander()
 {
-    m_nh.getParam("buffer_size", m_buffer_size);
-    m_nh.getParam("joy_topic", m_joy_topic);
-    m_nh.getParam("twist_topic", m_twist_topic);
-    m_nh.getParam("max_linear_speed", m_max_linear);
-    m_nh.getParam("max_angular_speed", m_max_angular);
+    m_nh.getParam("/commander/buffer_size", m_buffer_size);
+    m_nh.getParam("/commander/joy_topic", m_joy_topic);
+    m_nh.getParam("/commander/twist_topic", m_twist_topic);
+    m_nh.getParam("/commander/max_linear_speed", m_max_linear);
+    m_nh.getParam("/commander/max_angular_speed", m_max_angular);
 }
 
 void Commander::advertise()
@@ -52,7 +49,7 @@ void Commander::advertise()
 void Commander::cb(const sensor_msgs::Joy::ConstPtr &msg)
 {
     // y-component of left js
-    float linear = msg->axes[1] / std::numeric_limits<int16_t>::max() * m_max_linear;
+    float linear = msg->axes[1] / std::numeric_limits<int16_t>::max() * m_max_linear * -1;
     // x-component of right js
     float angular = msg->axes[2] / std::numeric_limits<int16_t>::max() * m_max_angular;
     // left bumper
@@ -66,4 +63,5 @@ void Commander::cb(const sensor_msgs::Joy::ConstPtr &msg)
     twist_msg.linear.y = 0;
     twist_msg.linear.z = angular * deadman;
     m_twist_pub.publish(twist_msg);
+    ROS_INFO("Published twist message");
 }
