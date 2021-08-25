@@ -9,7 +9,7 @@ EXECUTE_PROCESS( COMMAND uname -m COMMAND tr -d '\n' OUTPUT_VARIABLE ARCHITECTUR
 if(${ARCHITECTURE} STREQUAL "x86_64")
   set(OpenCV_DIR /usr/lib/x86_64-linux-gnu/cmake/opencv4/)
 else()
-  set(OpenCV_DIR /usr/local/lib/cmake/opencv4/)
+  set(OpenCV_DIR /usr/lib/aarch64-linux-gnu/cmake/opencv4/)
 endif()
 
 ## Find catkin macros and libraries
@@ -163,6 +163,11 @@ target_link_libraries(${PROJECT_NAME}_node
   ${OpenCV_LIBRARIES}
   ${PROJECT_NAME}
 )
+
+target_link_libraries(${PROJECT_NAME}
+  ${OpenCV_LIBRARIES}
+)
+
 
 #############
 ## Install ##

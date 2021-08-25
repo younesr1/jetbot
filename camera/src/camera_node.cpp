@@ -53,10 +53,10 @@ int main(int argc, char **argv)
             sensor_msgs::ImagePtr msg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", img).toImageMsg();
             raw_pub.publish(msg);
 
-            cv::Mat undistorted;
-            cv::undistort(img, undistorted, Vision::Calibration::Intrinsics, Vision::Calibration::Distortions);
-            msg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", undistorted).toImageMsg();
-            undistorted_pub.publish(msg);
+            //cv::Mat undistorted;
+            //cv::undistort(img, undistorted, Vision::Calibration::Intrinsics, Vision::Calibration::Distortions);
+            //msg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", undistorted).toImageMsg();
+            //undistorted_pub.publish(msg);
         }
         else
         {
