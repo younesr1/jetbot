@@ -33,11 +33,11 @@ int main(int argc, char **argv)
 
 Commander::Commander()
 {
-    m_nh.getParam("/commander/buffer_size", m_buffer_size);
-    m_nh.getParam("/commander/joy_topic", m_joy_topic);
-    m_nh.getParam("/commander/twist_topic", m_twist_topic);
-    m_nh.getParam("/commander/max_linear_speed", m_max_linear);
-    m_nh.getParam("/commander/max_angular_speed", m_max_angular);
+    m_nh.getParam("/drive_commander/buffer_size", m_buffer_size);
+    m_nh.getParam("/drive_commander/joy_topic", m_joy_topic);
+    m_nh.getParam("/drive_commander/twist_topic", m_twist_topic);
+    m_nh.getParam("/drive_commander/max_linear_speed", m_max_linear);
+    m_nh.getParam("/drive_commander/max_angular_speed", m_max_angular);
 }
 
 void Commander::advertise()
