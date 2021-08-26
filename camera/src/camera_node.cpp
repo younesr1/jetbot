@@ -57,6 +57,7 @@ int main(int argc, char **argv)
             cv::undistort(img, undistorted, Vision::Calibration::Intrinsics, Vision::Calibration::Distortions);
             msg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", undistorted).toImageMsg();
             undistorted_pub.publish(msg);
+            ROS_INFO("Published Image");
         }
         else
         {
