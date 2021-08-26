@@ -1,7 +1,6 @@
 #include "camera/raspi_cam.hpp"
 #include "camera/calibration.hpp"
 
-#include <filesystem>
 #include <string>
 
 namespace Vision
