@@ -22,6 +22,7 @@ class Controller:
         [left, right] = self.twist_to_pair(data)
         self.fw.SetLeftMotorSpeed(left)
         self.fw.SetRightMotorSpeed(right)
+        rospy.loginfo("Setting motor speed")
 
 
 def main():
