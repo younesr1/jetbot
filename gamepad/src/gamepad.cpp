@@ -35,11 +35,18 @@ namespace IO
     {
         constexpr auto AXIS = 0x02; // joystick and trigger
         constexpr auto BUTTON = 0x01;
+        constexpr auto RIGHT_TRIGGER = 0x04, LEFT_TRIGGER = 0x03;
+        constexpr auto LEFT_JS_X = 0x00, LEFT_JS_Y = 0x01;
+        constexpr auto RIGHT_JS_X = 0x02, RIGHT_JS_Y = 0x05;
+        constexpr auto X_BUTTON = 0x1, CIRCLE_BUTTON = 0x02, TRIANGLE_BUTTON = 0x03, SQUARE_BUTTON = 0x00;
+        /* constexpr auto AXIS = 0x02; // joystick and trigger
+        constexpr auto BUTTON = 0x01;
         constexpr auto RIGHT_TRIGGER = 0x05, LEFT_TRIGGER = 0x02;
         constexpr auto LEFT_JS_X = 0x00, LEFT_JS_Y = 0x01;
         constexpr auto RIGHT_JS_X = 0x03, RIGHT_JS_Y = 0x04;
         constexpr auto X_BUTTON = 0x0, CIRCLE_BUTTON = 0x01, TRIANGLE_BUTTON = 0x02, SQUARE_BUTTON = 0x03;
-        constexpr auto RIGHT_BUMPER = 0x05, LEFT_BUMPER = 0x04;
+        constexpr auto RIGHT_BUMPER = 0x05, LEFT_BUMPER = 0x04; */
+
         if (event.type == AXIS)
         {
             if (event.id == RIGHT_TRIGGER)
