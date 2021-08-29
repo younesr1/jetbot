@@ -36,7 +36,7 @@ namespace IO
         // jetson and laptop have different button mappings for ps4 controller
         constexpr auto AXIS = 0x02; // joystick and trigger
         constexpr auto BUTTON = 0x01;
-#ifdef __arm__
+#ifdef __ARM_ARCH_8A
         constexpr auto RIGHT_TRIGGER = 0x04, LEFT_TRIGGER = 0x03;
         constexpr auto LEFT_JS_X = 0x00, LEFT_JS_Y = 0x01;
         constexpr auto RIGHT_JS_X = 0x02, RIGHT_JS_Y = 0x05;
