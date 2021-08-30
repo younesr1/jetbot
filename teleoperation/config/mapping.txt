@@ -1,0 +1,3 @@
+## Laptop
+buttons: x=0,y=1,trangle=2,square=3,l1=4,r1=5,ps=10,l3=11,l3=11
+axes: left_js_x=0,left_js_y=1,l2=2,right_js_x=3,right_js_y=4,r2=5

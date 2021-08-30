@@ -1,8 +1,0 @@
-<launch>
-  <node name="gamepad_publisher" pkg="gamepad" type="node" >
-    <param name="frequency" type="double" value="60.0" />
-    <param name="topic" type="string" value="/gamepad/data" />
-    <param name="path" type="string" value="/dev/input/js0" />
-    <param name="buffer_size" type="int" value="100" />
-  </node>
-</launch>
