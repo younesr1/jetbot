@@ -1,0 +1,7 @@
+axis_linear: 1
+scale_linear: 1 # m/s
+
+axis_angular: 2
+scale_angular: 1 # rad/s
+
+enable_button: 4  # L1 trigger button
