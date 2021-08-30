@@ -1,8 +1,7 @@
 <launch>
   <node name="drive_controller" pkg="drive_controller" type="node.py" >
     <param name="topic" type="string" value="/cmd_vel" />
-    <param name="max_wheel_speed" type="double" value="15.708" />
-    <param name="wheel_radius" type="double" value="0.0325" />
-    <param name="wheel_seperation" type="double" value="0.07" />
+    <param name="left_trim" type="int" value="0" />
+    <param name="right_trim" type="int" value="0" />
   </node>
 </launch>
