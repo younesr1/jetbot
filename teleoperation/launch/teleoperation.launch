@@ -1,6 +1,7 @@
 <launch>
   <arg name="joy_dev" default="/dev/input/js0" />
-  <arg name="config_filepath" default="$(find teleoperation)/config/ps4.config.yaml" />
+  <arg name="platform" default="jetson" />
+  <arg name="config_filepath" default="$(find teleoperation)/config/ps4_$(arg platform).config.yaml" />
 
   <node pkg="joy" type="joy_node" name="joy_node" >
     <param name="dev" value="$(arg joy_dev)" />
