@@ -1,5 +1,5 @@
 <launch>
   <include file="$(find camera)/launch/camera.launch" />
-  <include file="$(find teleopration)/launch/teleoperation.launch" />
+  <include file="$(find teleoperation)/launch/teleoperation.launch" />
   <include file="$(find drive_controller)/launch/drive_controller.launch" />
 </launch>
