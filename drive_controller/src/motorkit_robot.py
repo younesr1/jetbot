@@ -45,14 +45,16 @@ class Robot:
         """Set the speed of the left motor, taking into account its trim offset."""
         assert -1 <= speed <= 1, "Speed must be a value between -1 to 1 inclusive!"
         speed += self._left_trim
-        speed = max(-1, min(1, speed))  # Constrain speed to 0-255 after trimming.
+        # Constrain speed to 0-255 after trimming.
+        speed = max(-1, min(1, speed))
         kit.motor1.throttle = speed
 
     def _right_speed(self, speed):
         """Set the speed of the right motor, taking into account its trim offset."""
         assert -1 <= speed <= 1, "Speed must be a value between -1 to 1 inclusive!"
         speed += self._right_trim
-        speed = max(-1, min(1, speed))  # Constrain speed to 0-255 after trimming.
+        # Constrain speed to 0-255 after trimming.
+        speed = max(-1, min(1, speed))
         kit.motor2.throttle = speed
 
     @staticmethod
@@ -75,16 +77,20 @@ class Robot:
             self.stop()
 
     def steer(self, speed, direction):
-        # Move forward at the specified speed (0- 1).  Direction is +- 1.
-        # Full left is -1, Full right is +1
-        if (speed + direction / 2) > 1:
-            speed = (
-                speed - direction / 2
-            )  # calibrate so total motor output never goes above 1
-        left = speed + direction / 2
-        right = speed - direction / 2
-        self._left_speed(left)
-        self._right_speed(right)
+        # younes todo this logic is a bit rough but will disappear once diff_drive_controller is used
+        if speed > 0:
+            # Move forward at the specified speed (0- 1).  Direction is +- 1.
+            # Full left is -1, Full right is +1
+            if (speed + direction / 2) > 1:
+                speed = (
+                    speed - direction / 2
+                )  # calibrate so total motor output never goes above 1
+            left = speed + direction / 2
+            right = speed - direction / 2
+            self._left_speed(left)
+            self._right_speed(right)
+        elif speed == 0:
+            self.right(speed) if direction > 0 else self.left(speed)
 
     def backward(self, speed, seconds=None):
         """Move backward at the specified speed (0-1).  Will start moving
@@ -104,9 +110,8 @@ class Robot:
         return unless a seconds value is specified, in which case the robot will
         spin for that amount of time and then stop.
         """
-        # Set motor speed and move both forward.
         self._left_speed(speed)
-        self._right_speed(0)
+        self._right_speed(-speed)
         # If an amount of time is specified, move for that time and then stop.
         if seconds is not None:
             time.sleep(seconds)
@@ -118,9 +123,8 @@ class Robot:
         spin for that amount of time and then stop.
         """
         # Set motor speed and move both forward.
-        self._left_speed(0)
+        self._left_speed(-speed)
         self._right_speed(speed)
-        # If an amount of time is specified, move for that time and then stop.
         if seconds is not None:
             time.sleep(seconds)
             self.stop()
