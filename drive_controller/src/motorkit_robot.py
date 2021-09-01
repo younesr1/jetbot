@@ -63,68 +63,15 @@ class Robot:
         kit.motor1.throttle = 0
         kit.motor2.throttle = 0
 
-    def forward(self, speed, seconds=None):
-        """Move forward at the specified speed (0-1).  Will start moving
-        forward and return unless a seconds value is specified, in which
-        case the robot will move forward for that amount of time and then stop.
+    def linear(self, speed):
+        """Move without rotation at the specified speed [-1 - 1]
         """
-        # Set motor speed and move both forward.
         self._left_speed(speed)
         self._right_speed(speed)
-        # If an amount of time is specified, move for that time and then stop.
-        if seconds is not None:
-            time.sleep(seconds)
-            self.stop()
 
-    def steer(self, speed, direction):
-        # younes todo this logic is a bit rough but will disappear once diff_drive_controller is used
-        if speed > 0:
-            # Move forward at the specified speed (0- 1).  Direction is +- 1.
-            # Full left is -1, Full right is +1
-            if (speed + direction / 2) > 1:
-                speed = (
-                    speed - direction / 2
-                )  # calibrate so total motor output never goes above 1
-            left = speed + direction / 2
-            right = speed - direction / 2
-            self._left_speed(left)
-            self._right_speed(right)
-        elif speed == 0:
-            self.right(speed) if direction > 0 else self.left(speed)
-
-    def backward(self, speed, seconds=None):
-        """Move backward at the specified speed (0-1).  Will start moving
-        backward and return unless a seconds value is specified, in which
-        case the robot will move backward for that amount of time and then stop.
+    def angular(self, speed):
+        """Move angularly [-1 - 1]. +ve is ccw, -ve is cw,
+        per typical cartesian coordinate system
         """
-        # Set motor speed and move both backward.
-        self._left_speed(-1 * speed)
-        self._right_speed(-1 * speed)
-        # If an amount of time is specified, move for that time and then stop.
-        if seconds is not None:
-            time.sleep(seconds)
-            self.stop()
-
-    def right(self, speed, seconds=None):
-        """Spin to the right at the specified speed.  Will start spinning and
-        return unless a seconds value is specified, in which case the robot will
-        spin for that amount of time and then stop.
-        """
-        self._left_speed(speed)
-        self._right_speed(-speed)
-        # If an amount of time is specified, move for that time and then stop.
-        if seconds is not None:
-            time.sleep(seconds)
-            self.stop()
-
-    def left(self, speed, seconds=None):
-        """Spin to the left at the specified speed.  Will start spinning and
-        return unless a seconds value is specified, in which case the robot will
-        spin for that amount of time and then stop.
-        """
-        # Set motor speed and move both forward.
         self._left_speed(-speed)
         self._right_speed(speed)
-        if seconds is not None:
-            time.sleep(seconds)
-            self.stop()

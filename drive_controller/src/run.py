@@ -10,10 +10,9 @@ def main():
 
     robot = motorkit_robot.Robot(left_trim=LEFT_TRIM, right_trim=RIGHT_TRIM)
     while not rospy.is_shudown():
-        for i in range(0, 1, 0.1):
-            robot.forward(i, 0.25)
-        for i in range(0, 1, 0.1):
-            robot.backward(i, 0.25)
+        for i in range(-1, 1, 0.1):
+            robot.linear(i)
+            time.sleep(0.25)
         robot.stop()
         time.sleep(1)
 

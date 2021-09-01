@@ -12,10 +12,9 @@ def main():
     right_trim = rospy.get_param("/drive_controller/right_trim")
 
     robot = Robot(left_trim=left_trim, right_trim=right_trim)
+    func = lambda twist : robot.linear(twist.linear.x) if twist.linear.x != 0 else robot.angular(twist.angular.z) 
 
-    # younes todo the steer function cant handle negative speeds, might behave weirdly
-    rospy.Subscriber(topic, Twist, lambda twist: robot.steer(twist.linear.x, -twist.angular.z)
-                     )
+    rospy.Subscriber(topic, Twist, func)
     rospy.spin()
 
 
