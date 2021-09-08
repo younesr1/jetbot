@@ -29,7 +29,7 @@
 
 #include "camera/image_converter.hpp"
 
-bool GrabImage(gstCamera *camera, imageConverter *camera_cvt, sensor_messages::Image &img)
+bool GrabImage(gstCamera *camera, imageConverter *camera_cvt, sensor_msgs::Image &img)
 {
 	float4 *imgRGBA = NULL;
 
@@ -85,7 +85,7 @@ int main(int argc, char **argv)
 	/*
 	 * create image converter
 	 */
-	auto camera_cvt = std::unique_ptr<imageConverter>();
+	auto camera_cvt = new imageConverter();
 
 	if (!camera_cvt)
 	{
@@ -122,5 +122,6 @@ int main(int argc, char **argv)
 	}
 
 	delete camera;
+	delete camera_cvt;
 	return EXIT_SUCCESS;
 }

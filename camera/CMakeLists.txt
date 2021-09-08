@@ -17,7 +17,8 @@ find_package(catkin REQUIRED COMPONENTS
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
-
+find_package(jetson-utils REQUIRED)
+find_package(CUDA REQUIRED)
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -120,8 +121,13 @@ catkin_package(
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
+  ${CUDA_INCLUDE_DIRS}
   ${OpenCV_INCLUDE_DIRS}
 )
+
+# gstreamer related includes
+include_directories(/usr/include/gstreamer-1.0 /usr/include/glib-2.0 /usr/include/libxml2 /usr/lib/aarch64-linux-gnu/gstreamer-1.0/include /usr/lib/x86_64-linux-gnu/gstreamer-1.0/include/ /usr/lib/aarch64-linux-gnu/glib-2.0/include/ /usr/lib/x86_64-linux-gnu/glib-2.0/include/)
+
 
 ## Declare a C++ library
 add_library(image_converter
@@ -155,9 +161,8 @@ target_link_libraries(${PROJECT_NAME}_node
 )
 
 target_link_libraries(image_converter
-  #younes todo might need to link the nvidia lib for gstcam
+  jetson-utils
 )
-
 
 #############
 ## Install ##
