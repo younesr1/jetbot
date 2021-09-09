@@ -57,6 +57,8 @@ class Robot(object):
 
     def stop(self):
         """Stop all movement."""
+        self._left.setSpeed(0)
+        self._right.setSpeed(0)
         self._left.run(Adafruit_MotorHAT.RELEASE)
         self._right.run(Adafruit_MotorHAT.RELEASE)
 
@@ -64,22 +66,27 @@ class Robot(object):
         """Move without rotation at the specified speed [-1 - 1]
         """
         speed = int(abs(speed*255))
-        # Set motor speed and move both forward.
-        self._left_speed(speed)
-        self._right_speed(speed)
-        dir = Adafruit_MotorHAT.FORWARD if speed > 0 else Adafruit_MotorHAT.BACKWARD
-        self._left.run(dir)
-        self._right.run(dir)
+        if speed == 0:
+            self.stop()
+        else:
+            # Set motor speed and move both forward.
+            self._left_speed(speed)
+            self._right_speed(speed)
+            dir = Adafruit_MotorHAT.FORWARD if speed > 0 else Adafruit_MotorHAT.BACKWARD
+            self._left.run(dir)
+            self._right.run(dir)
 
     def angular(self, speed):
         """Move angularly [-1 - 1]. +ve is ccw, -ve is cw,
         per typical cartesian coordinate system
         """
         speed = int(abs(speed*255))
-        # Set motor speed and move both forward.
-        self._left_speed(speed)
-        self._right_speed(speed)
-        left_dir = Adafruit_MotorHAT.BACKWARD if speed > 0 else Adafruit_MotorHAT.FORWARD
-        right_dir = Adafruit_MotorHAT.BACKWARD if speed < 0 else Adafruit_MotorHAT.FORWARD
-        self._left.run(left_dir)
-        self._right.run(right_dir)
+        if speed == 0:
+            self.stop()
+        else:
+            self._left_speed(speed)
+            self._right_speed(speed)
+            left_dir = Adafruit_MotorHAT.BACKWARD if speed > 0 else Adafruit_MotorHAT.FORWARD
+            right_dir = Adafruit_MotorHAT.BACKWARD if speed < 0 else Adafruit_MotorHAT.FORWARD
+            self._left.run(left_dir)
+            self._right.run(right_dir)
