@@ -66,7 +66,7 @@ int main(int argc, char **argv)
 	 */
     std::string camera_device, topic;
     int buffer;
-    nh.param<std::string>("device", camera_device, "0");
+    nh.param<std::string>("device", camera_device, "csi://0");
     nh.param<std::string>("topic", topic, "/camera/image/raw");
     nh.param<int>("buffer_size", buffer, 10);
 

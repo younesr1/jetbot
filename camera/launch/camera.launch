@@ -1,7 +1,7 @@
 <launch>
   <node name="camera" pkg="camera" type="node" >
     <param name="topic" type="string" value="/camera/image/raw" />
-    <param name="device" type="string" value="0" />
+    <param name="device" type="string" value="csi://0" />
     <param name="buffer_size" type="int" value="10" />
   </node>
 </launch>
