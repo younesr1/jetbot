@@ -4,14 +4,6 @@ project(camera)
 ## Compile as C++17, supported in ROS Kinetic and newer
 add_compile_options(-std=c++17)
 
-## Declare path to OpenCVConfig.cmake which differs between Jetbot and Dell laptop
-EXECUTE_PROCESS( COMMAND uname -m COMMAND tr -d '\n' OUTPUT_VARIABLE ARCHITECTURE )
-if(${ARCHITECTURE} STREQUAL "x86_64")
-  set(OpenCV_DIR /usr/lib/x86_64-linux-gnu/cmake/opencv4/)
-else()
-  set(OpenCV_DIR /usr/lib/aarch64-linux-gnu/cmake/opencv4/)
-endif()
-
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
@@ -19,14 +11,14 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   sensor_msgs
   std_msgs
-  OpenCV
   image_transport
   cv_bridge
 )
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
-
+find_package(jetson-utils REQUIRED)
+find_package(CUDA REQUIRED)
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -115,7 +107,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
  INCLUDE_DIRS include
- LIBRARIES raspi_cam
+ LIBRARIES image_converter
  CATKIN_DEPENDS roscpp sensor_msgs std_msgs image_transport cv_bridge
 #  DEPENDS system_lib
 )
@@ -129,12 +121,17 @@ catkin_package(
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
+  ${CUDA_INCLUDE_DIRS}
   ${OpenCV_INCLUDE_DIRS}
 )
 
+# gstreamer related includes
+include_directories(/usr/include/gstreamer-1.0 /usr/include/glib-2.0 /usr/include/libxml2 /usr/lib/aarch64-linux-gnu/gstreamer-1.0/include /usr/lib/x86_64-linux-gnu/gstreamer-1.0/include/ /usr/lib/aarch64-linux-gnu/glib-2.0/include/ /usr/lib/x86_64-linux-gnu/glib-2.0/include/)
+
+
 ## Declare a C++ library
-add_library(raspi_cam
-  src/raspi_cam.cpp
+add_library(image_converter
+  src/image_converter.cpp
 )
 
 ## Add cmake target dependencies of the library
@@ -160,14 +157,12 @@ add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catk
 ## Specify libraries to link a library or executable target against
 target_link_libraries(${PROJECT_NAME}_node
   ${catkin_LIBRARIES}
-  ${OpenCV_LIBRARIES}
-  raspi_cam
+  image_converter
 )
 
-target_link_libraries(raspi_cam
-  ${OpenCV_LIBRARIES}
+target_link_libraries(image_converter
+  jetson-utils
 )
-
 
 #############
 ## Install ##
@@ -191,7 +186,7 @@ install(TARGETS ${PROJECT_NAME}_node
 
 ## Mark libraries for installation
 ## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_libraries.html
-install(TARGETS raspi_cam
+install(TARGETS image_converter
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}

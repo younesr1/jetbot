@@ -1,68 +1,130 @@
-#include <ros/ros.h>
-#include <image_transport/image_transport.h>
-#include <cv_bridge/cv_bridge.h>
-#include <camera/raspi_cam.hpp>
-#include <camera/calibration.hpp>
-#include <chrono>
-#include <thread>
-using namespace std::chrono_literals;
+/*
+ * Copyright (c) 2019, NVIDIA CORPORATION. All rights reserved.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
+ */
 
+#include <ros/ros.h>
+#include <sensor_msgs/Image.h>
+#include <sensor_msgs/image_encodings.h>
+#include <memory>
+#include <jetson-utils/gstCamera.h>
+#include "camera/image_converter.hpp"
+
+bool GrabImage(gstCamera *camera, std::unique_ptr<imageConverter> &camera_cvt, sensor_msgs::Image &img)
+{
+    float4 *imgRGBA = NULL;
+
+    // get the latest frame
+    constexpr auto timeout = 1000; //ms
+    if (!camera->CaptureRGBA((float **)&imgRGBA, timeout))
+    {
+        ROS_ERROR("failed to capture camera frame");
+        return false;
+    }
+
+    // assure correct image size
+    if (!camera_cvt->Resize(camera->GetWidth(), camera->GetHeight(), IMAGE_RGBA32F))
+    {
+        ROS_ERROR("failed to resize camera image converter");
+        return false;
+    }
+
+    // populate the message
+    if (!camera_cvt->Convert(img, imageConverter::ROSOutputFormat, imgRGBA))
+    {
+        ROS_ERROR("failed to convert camera frame to sensor_msgs::Image");
+        return false;
+    }
+    return true;
+}
+
+// node main loop
 int main(int argc, char **argv)
 {
-    ros::init(argc, argv, "camera");
+    ros::init(argc, argv, "jetbot_camera");
     ros::NodeHandle nh;
 
-    int cap_width, cap_height, disp_width, disp_height, buffer_size;
-    double frequency;
-    std::string raw_img_topic, undistorted_img_topic;
+    /*
+	 * retrieve parameters
+	 */
+    std::string camera_device, topic;
+    int buffer;
+    nh.param<std::string>("device", camera_device, "csi://0");
+    nh.param<std::string>("topic", topic, "/camera/image/raw");
+    nh.param<int>("buffer_size", buffer, 10);
 
-    bool parameter_validity = nh.getParam("/camera/raw_img_topic", raw_img_topic);
-    parameter_validity &= nh.getParam("/camera/undistorted_img_topic", undistorted_img_topic);
-    parameter_validity &= nh.getParam("/camera/buffer_size", buffer_size);
-    parameter_validity &= nh.getParam("/camera/frequency", frequency);
-    parameter_validity &= nh.getParam("/camera/cap_width", cap_width);
-    parameter_validity &= nh.getParam("/camera/cap_height", cap_height);
-    parameter_validity &= nh.getParam("/camera/disp_width", disp_width);
-    parameter_validity &= nh.getParam("/camera/disp_height", disp_height);
+    ROS_INFO("opening camera device %s", camera_device.c_str());
 
-    if (!parameter_validity)
+    /*
+	 * open camera device
+	 */
+    videoOptions opt;
+    opt.flipMethod = videoOptions::FLIP_ROTATE_180;
+    opt.resource = camera_device.c_str();
+    auto camera = gstCamera::Create(opt);
+
+    if (!camera)
     {
-        ROS_FATAL("Could not retrieve required parameters");
+        ROS_ERROR("failed to open camera device %s", camera_device.c_str());
         return EXIT_FAILURE;
     }
 
-    image_transport::ImageTransport it(nh);
-    image_transport::Publisher raw_pub = it.advertise(raw_img_topic, buffer_size);
-    image_transport::Publisher undistorted_pub = it.advertise(undistorted_img_topic, buffer_size);
+    /*
+	 * create image converter
+	 */
+    auto camera_cvt = std::make_unique<imageConverter>();
 
-    Vision::RaspiCam cam(cap_width, cap_height, disp_width, disp_height, frequency);
-
-    while (!cam.Connect() && ros::ok())
+    if (!camera_cvt)
     {
-        ROS_WARN("Unable to connect to Raspi Camera. Trying again in 2 seconds");
-        std::this_thread::sleep_for(2s);
+        ROS_ERROR("failed to create imageConverter");
+        return EXIT_FAILURE;
     }
-    ROS_INFO("Found Raspi Camera");
 
-    ros::Rate loop_rate(frequency);
+    /*
+	 * advertise publisher topics
+	 */
+    ros::Publisher camera_publisher = nh.advertise<sensor_msgs::Image>(topic, buffer);
+    /*
+	 * start the camera streaming
+	 */
+    if (!camera->Open())
+    {
+        ROS_ERROR("failed to start camera streaming");
+        return EXIT_FAILURE;
+    }
+
+    /*
+	 * start publishing video frames
+	 */
     while (ros::ok())
     {
-        cv::Mat img;
-        if (cam.GrabFrame(img))
+        sensor_msgs::Image msg;
+        if (GrabImage(camera, camera_cvt, msg))
         {
-            sensor_msgs::ImagePtr msg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", img).toImageMsg();
-            raw_pub.publish(msg);
+            camera_publisher.publish(msg);
+            ROS_INFO("published camera frame");
+        }
 
-            //cv::Mat undistorted;
-            //cv::undistort(img, undistorted, Vision::Calibration::Intrinsics, Vision::Calibration::Distortions);
-            //msg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", undistorted).toImageMsg();
-            //undistorted_pub.publish(msg);
-        }
-        else
-        {
-            ROS_WARN("Error retrieving image");
-        }
         ros::spinOnce();
-        loop_rate.sleep();
     }
+
+    delete camera;
+    return EXIT_SUCCESS;
 }
