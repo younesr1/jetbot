@@ -9,7 +9,7 @@ from Adafruit_MotorHAT import Adafruit_MotorHAT
 
 
 class Robot(object):
-    def __init__(self, addr=0x60, left_id=1, right_id=2, left_trim=0, right_trim=0,
+    def __init__(self, addr=0x60, bus_num=1, left_id=1, right_id=2, left_trim=0, right_trim=0,
                  stop_at_exit=True):
         """Create an instance of the robot.  Can specify the following optional
         parameters:
@@ -25,7 +25,7 @@ class Robot(object):
                          value to prevent damage to the bot on program crash!).
         """
         # Initialize motor HAT and left, right motor.
-        self._mh = Adafruit_MotorHAT(addr)
+        self._mh = Adafruit_MotorHAT(addr=addr, i2c_bus=bus_num)
         self._left = self._mh.getMotor(left_id)
         self._right = self._mh.getMotor(right_id)
         self._left_trim = left_trim
@@ -63,7 +63,7 @@ class Robot(object):
     def linear(self, speed):
         """Move without rotation at the specified speed [-1 - 1]
         """
-        speed = abs(speed*255)
+        speed = int(abs(speed*255))
         # Set motor speed and move both forward.
         self._left_speed(speed)
         self._right_speed(speed)
@@ -75,7 +75,7 @@ class Robot(object):
         """Move angularly [-1 - 1]. +ve is ccw, -ve is cw,
         per typical cartesian coordinate system
         """
-        speed = abs(speed*255)
+        speed = int(abs(speed*255))
         # Set motor speed and move both forward.
         self._left_speed(speed)
         self._right_speed(speed)
