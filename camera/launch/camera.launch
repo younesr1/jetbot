@@ -1,12 +1,7 @@
 <launch>
   <node name="camera" pkg="camera" type="node" >
-    <param name="raw_img_topic" type="string" value="/camera/image/raw" />
-    <param name="undistorted_img_topic" type="string" value="/camera/image/undistorted" />
+    <param name="topic" type="string" value="/camera/image/raw" />
+    <param name="device" type="string" value="0" />
     <param name="buffer_size" type="int" value="10" />
-    <param name="frequency" type="double" value="20.0" />
-    <param name="cap_width" type="int" value="3820" />
-    <param name="cap_height" type="int" value="2464" />
-    <param name="disp_width" type="int" value="960" />
-    <param name="disp_height" type="int" value="616" />
   </node>
 </launch>
