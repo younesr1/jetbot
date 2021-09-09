@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 import rospy
 from geometry_msgs.msg import Twist
 from motorkit_robot import Robot
