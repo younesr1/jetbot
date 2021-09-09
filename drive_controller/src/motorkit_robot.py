@@ -73,7 +73,9 @@ class Robot(object):
             self._left_speed(speed)
             self._right_speed(speed)
             dir = Adafruit_MotorHAT.FORWARD if speed > 0 else Adafruit_MotorHAT.BACKWARD
-            self._left.run(dir)
+            # younes todo this code is hacky add some arg
+            self._left.run(Adafruit_MotorHAT.FORWARD if dir ==
+                           Adafruit_MotorHAT.BACKWARD else Adafruit_MotorHAT.BACKWARD)
             self._right.run(dir)
 
     def angular(self, speed):
@@ -88,5 +90,6 @@ class Robot(object):
             self._right_speed(speed)
             left_dir = Adafruit_MotorHAT.BACKWARD if speed > 0 else Adafruit_MotorHAT.FORWARD
             right_dir = Adafruit_MotorHAT.BACKWARD if speed < 0 else Adafruit_MotorHAT.FORWARD
-            self._left.run(left_dir)
+            self._left.run(Adafruit_MotorHAT.FORWARD if left_dir ==
+                           Adafruit_MotorHAT.BACKWARD else Adafruit_MotorHAT.BACKWARD)
             self._right.run(right_dir)
