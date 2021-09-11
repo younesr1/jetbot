@@ -1,18 +1,18 @@
 <?xml version="1.0" ?>
 <robot name="JetBot">
-  <joint name="JetBot__left_wheel_hinge" type="fixed">
+  <joint name="JetBot__left_wheel_hinge" type="continuous">
     <parent link="JetBot__chassis"/>
     <child link="JetBot__left_wheel"/>
     <origin xyz="0.03    0.05125 0.03" rpy="0      0      1.57079"/>
     <axis xyz="1 0 0"/>
-    <limit lower="0" upper="0" effort="0" velocity="0"/>
+    <limit effort="1" velocity="1"/>
   </joint>
-  <joint name="JetBot__right_wheel_hinge" type="fixed">
+  <joint name="JetBot__right_wheel_hinge" type="continuous">
     <parent link="JetBot__chassis"/>
     <child link="JetBot__right_wheel"/>
     <origin xyz="0.03   -0.05125  0.03" rpy="0      0      -1.57079"/>
     <axis xyz="1 0 0"/>
-    <limit lower="0" upper="0" effort="0" velocity="0"/>
+    <limit effort="1" velocity="1"/>
   </joint>
   <joint name="JetBot__camera_joint" type="fixed">
     <parent link="JetBot__chassis"/>
