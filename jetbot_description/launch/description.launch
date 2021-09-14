@@ -1,0 +1,9 @@
+<launch>
+
+  <arg name="robot_description_file" default="$(find jetbot_description)/urdf/jetbot.urdf" />
+  <param name="robot_description" type="string" textfile="$(arg robot_description_file)" />
+
+  <node name="jetbot_joint_pub" pkg="joint_state_publisher" type="joint_state_publisher" />
+  <node name="jetbot_state_pub" pkg="robot_state_publisher" type="robot_state_publisher" />
+
+</launch>
