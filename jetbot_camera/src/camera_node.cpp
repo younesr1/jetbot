@@ -66,9 +66,9 @@ int main(int argc, char **argv)
 	 */
     std::string camera_device, topic;
     int buffer;
-    nh.param<std::string>("device", camera_device, "csi://0");
-    nh.param<std::string>("topic", topic, "/camera/image/raw");
-    nh.param<int>("buffer_size", buffer, 10);
+    nh.param<std::string>("/jetbot_camera/device", camera_device, "csi://0");
+    nh.param<std::string>("/jetbot_camera/topic", topic, "/camera/image/raw");
+    nh.param<int>("/jetbot_camera/buffer_size", buffer, 10);
 
     ROS_INFO("opening camera device %s", camera_device.c_str());
 
