@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.2)
-project(bringup)
+project(jetbot_teleoperation)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
@@ -8,11 +8,10 @@ project(bringup)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  camera
-  drive_controller
+  joy
   roscpp
   rospy
-  teleoperation
+  teleop_twist_joy
 )
 
 ## System dependencies are found with CMake's conventions
@@ -106,8 +105,8 @@ find_package(catkin REQUIRED COMPONENTS
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
 #  INCLUDE_DIRS include
-#  LIBRARIES bringup
-#  CATKIN_DEPENDS camera drive_controller roscpp rospy teleoperation
+#  LIBRARIES jetbot_teleoperation
+#  CATKIN_DEPENDS joy roscpp rospy teleop_twist_joy
 #  DEPENDS system_lib
 )
 
@@ -124,7 +123,7 @@ include_directories(
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/bringup.cpp
+#   src/${PROJECT_NAME}/jetbot_teleoperation.cpp
 # )
 
 ## Add cmake target dependencies of the library
@@ -135,7 +134,7 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-# add_executable(${PROJECT_NAME}_node src/bringup_node.cpp)
+# add_executable(${PROJECT_NAME}_node src/teleoperation_node.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -189,8 +188,8 @@ include_directories(
 
 ## Mark other files for installation (e.g. launch and bag files, etc.)
 install(FILES
-  launch/base.launch
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+ launch/teleoperation.launch
+ DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
 
 #############
@@ -198,7 +197,7 @@ install(FILES
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_bringup.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_teleoperation.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()

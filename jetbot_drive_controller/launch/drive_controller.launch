@@ -1,5 +1,5 @@
 <launch>
-  <node name="drive_controller" pkg="drive_controller" type="node.py" >
+  <node name="jetbot_drive_controller" pkg="jetbot_drive_controller" type="node.py" >
     <param name="topic" type="string" value="/cmd_vel" />
     <param name="left_trim" type="int" value="0" />
     <param name="right_trim" type="int" value="0" />

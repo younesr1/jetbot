@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.2)
-project(description)
+project(jetbot_bringup)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
@@ -8,13 +8,11 @@ project(description)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  robot_state_publisher
-  joint_state_publisher
+  jetbot_camera
+  jetbot_drive_controller
   roscpp
   rospy
-  sensor_msgs
-  std_msgs
-  tf2
+  jetbot_teleoperation
 )
 
 ## System dependencies are found with CMake's conventions
@@ -74,7 +72,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## Generate added messages and services with any dependencies listed here
 # generate_messages(
 #   DEPENDENCIES
-#   sensor_msgs#   std_msgs
+#   std_msgs  # Or other packages containing msgs
 # )
 
 ################################################
@@ -108,8 +106,8 @@ find_package(catkin REQUIRED COMPONENTS
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
 #  INCLUDE_DIRS include
-#  LIBRARIES description
-  CATKIN_DEPENDS robot_state_publisher roscpp rospy sensor_msgs std_msgs tf2
+#  LIBRARIES jetbot_bringup
+#  CATKIN_DEPENDS jetbot_camera jetbot_drive_controller roscpp rospy jetbot_teleoperation
 #  DEPENDS system_lib
 )
 
@@ -126,7 +124,7 @@ include_directories(
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/description.cpp
+#   src/${PROJECT_NAME}/jetbot_bringup.cpp
 # )
 
 ## Add cmake target dependencies of the library
@@ -137,7 +135,7 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-# add_executable(${PROJECT_NAME}_node src/description_node.cpp)
+# add_executable(${PROJECT_NAME}_node src/bringup_node.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -191,7 +189,7 @@ include_directories(
 
 ## Mark other files for installation (e.g. launch and bag files, etc.)
 install(FILES
-  launch/description.launch
+  launch/base.launch
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
 
@@ -200,7 +198,7 @@ install(FILES
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_description.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_bringup.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()

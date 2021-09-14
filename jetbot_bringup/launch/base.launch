@@ -1,0 +1,5 @@
+<launch>
+  <include file="$(find jetbot_camera)/launch/camera.launch" />
+  <include file="$(find jetbot_teleoperation)/launch/teleoperation.launch" />
+  <include file="$(find jetbot_drive_controller)/launch/drive_controller.launch" />
+</launch>
