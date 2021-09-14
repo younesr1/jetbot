@@ -9,6 +9,7 @@ project(description)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   robot_state_publisher
+  joint_state_publisher
   roscpp
   rospy
   sensor_msgs
@@ -108,7 +109,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES description
-#  CATKIN_DEPENDS robot_state_publisher roscpp rospy sensor_msgs std_msgs tf2
+  CATKIN_DEPENDS robot_state_publisher roscpp rospy sensor_msgs std_msgs tf2
 #  DEPENDS system_lib
 )
 
