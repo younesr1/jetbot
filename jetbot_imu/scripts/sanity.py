@@ -3,16 +3,18 @@
 # SPDX-FileCopyrightText: 2021 ladyada for Adafruit Industries
 # SPDX-License-Identifier: MIT
 
+# This script is meant as a sanity test to verify that the imu works
 import time
 import adafruit_mpu6050
-# import rospy
+import rospy
 import board
+
 
 def main():
     i2c = board.I2C()  # uses board.SCL and board.SDA
-    mpu = adafruit_mpu6050.MPU6050(i2c) # connects to bus 1
+    mpu = adafruit_mpu6050.MPU6050(i2c)  # connects to bus 1
 
-    while True:  # not rospy.is_shutdown():
+    while not rospy.is_shutdown():
         print("Acceleration: X:%.2f, Y: %.2f, Z: %.2f m/s^2" %
               (mpu.acceleration))
         print("Gyro X:%.2f, Y: %.2f, Z: %.2f rad/s" % (mpu.gyro))
