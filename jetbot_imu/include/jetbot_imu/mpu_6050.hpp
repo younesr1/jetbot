@@ -51,6 +51,9 @@ namespace Sensors
         // Reset the sensor
         bool Reset();
 
+        // Read the ID of the sensor
+        bool ReadID(int8_t &data);
+
     private:
         int m_fd;
         AccelerometerRange m_arange;
@@ -76,6 +79,7 @@ namespace Sensors
             GYRO_ZOUT_L = 0x48,
             PWR_MGMT_1 = 0x6B,
             PWR_MGMT_2 = 0x6C,
+            WHOAMI = 0x75
         };
 
         const std::unordered_map<GyroscopeRange, double> m_gyro_scale_factors = {

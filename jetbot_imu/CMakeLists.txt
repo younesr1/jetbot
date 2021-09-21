@@ -151,6 +151,9 @@ add_dependencies(${PROJECT_NAME}_echo ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catk
 add_dependencies(${PROJECT_NAME}_variance_calculator ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
+target_link_libraries(mpu_6050
+  i2c
+)
 target_link_libraries(${PROJECT_NAME}_node
   mpu_6050
   ${catkin_LIBRARIES}

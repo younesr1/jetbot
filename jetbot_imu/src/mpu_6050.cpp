@@ -8,6 +8,11 @@
 #include <unistd.h>
 #include <math.h>
 
+extern "C"
+{
+#include <i2c/smbus.h>
+}
+
 namespace Sensors
 {
     MPU_6050::MPU_6050(uint8_t i2c_bus, uint8_t i2c_slave_address)
@@ -22,32 +27,42 @@ namespace Sensors
         {
             throw std::runtime_error("unable to initiate i2c communication with slave " + i2c_slave_address);
         }
-        // younes todo does pwr mgmt register need to be changed MIGHT NEED TO WRITE O TO PWRMGMT1
-        // younes todo might need to add 30 ms boot up time for gyro
     }
 
     bool MPU_6050::SetGyroRange(MPU_6050::GyroscopeRange range)
     {
-        m_grange = range;
-        return WriteRegister(MPU_6050::Register::GYRO_CONFIG, range);
+        if (WriteRegister(MPU_6050::Register::GYRO_CONFIG, range))
+        {
+            m_grange = range;
+            return true;
+        }
+        return false;
     }
 
     bool MPU_6050::SetAccelRange(MPU_6050::AccelerometerRange range)
     {
-        m_arange = range;
-        return WriteRegister(MPU_6050::Register::ACCEL_CONFIG, range);
+        if (WriteRegister(MPU_6050::Register::ACCEL_CONFIG, range))
+        {
+            m_arange = range;
+            return true;
+        }
+        return false;
     }
 
     bool MPU_6050::ReadRegister(int8_t target_register, int8_t &data)
     {
-        int8_t buffer[2] = {target_register, data};
-        return read(m_fd, buffer, 2) != 2;
+        auto res = i2c_smbus_read_word_data(m_fd, target_register);
+        if (res < 0)
+        {
+            return false;
+        }
+        data = static_cast<int8_t>(res);
+        return true;
     }
 
     bool MPU_6050::WriteRegister(int8_t target_register, int8_t data)
     {
-        int8_t buffer[2] = {target_register, data};
-        return write(m_fd, buffer, 2) != 2;
+        return i2c_smbus_write_word_data(m_fd, target_register, data) == 0;
     }
 
     int16_t MPU_6050::ConcactenateBytes(int8_t high, int8_t low) const
@@ -142,6 +157,11 @@ namespace Sensors
     {
         int8_t data = 1 << 7;
         return WriteRegister(Register::PWR_MGMT_1, data);
+    }
+
+    bool MPU_6050::ReadID(int8_t &data)
+    {
+        return ReadRegister(Register::WHOAMI, data);
     }
 
     Eigen::Matrix<double, 9, 1> MPU_6050::GetGyroCovariance() const

@@ -26,8 +26,13 @@ int main(int argc, char **argv)
         ROS_FATAL("Unable to set range of gyroscope");
         return EXIT_FAILURE;
     }
-
-    ROS_INFO("Successfully established communication with IMU");
+    int8_t id = 0;
+    if (!imu.ReadID(id))
+    {
+        ROS_FATAL("Unable to read IMU ID");
+        return EXIT_FAILURE;
+    }
+    ROS_INFO_STREAM("Successfully established communication with IMU! ID = " << id);
 
     while (ros::ok())
     {
