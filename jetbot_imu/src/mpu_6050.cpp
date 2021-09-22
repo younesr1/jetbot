@@ -27,6 +27,18 @@ namespace Sensors
         {
             throw std::runtime_error("unable to initiate i2c communication with slave " + i2c_slave_address);
         }
+
+        // set sample rate to 1khz
+        if (!WriteRegister(Register::SMPLRT_DIV, 7))
+        {
+            throw std::runtime_error("unable to set IMU sample rate");
+        }
+        // turn on IMU
+        if (!WriteRegister(Register::PWR_MGMT_1, 1))
+        {
+            throw std::runtime_error("Start collecting data");
+        }
+        
     }
 
     bool MPU_6050::SetGyroRange(MPU_6050::GyroscopeRange range)

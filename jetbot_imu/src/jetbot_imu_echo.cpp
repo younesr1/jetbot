@@ -32,7 +32,7 @@ int main(int argc, char **argv)
         ROS_FATAL("Unable to read IMU ID");
         return EXIT_FAILURE;
     }
-    ROS_INFO_STREAM("Successfully established communication with IMU! ID = " << id);
+    ROS_INFO_STREAM("Successfully established communication with IMU! ID = " << (int)id);
 
     while (ros::ok())
     {
@@ -48,9 +48,9 @@ int main(int argc, char **argv)
         if (success)
         {
             ROS_INFO("###");
-            ROS_INFO_STREAM("Angular Velocity (rad/s): " << theta_dot);
-            ROS_INFO_STREAM("Linear Acceleration (m/s^2): " << accel);
-            ROS_INFO_STREAM("Temperature (Celsius): " << temperature);
+            ROS_INFO_STREAM("Angular Velocity (rad/s): \n" << theta_dot);
+            ROS_INFO_STREAM("Linear Acceleration (m/s^2): \n" << accel);
+            ROS_INFO_STREAM("Temperature (Celsius): \n" << temperature);
             ROS_INFO("###");
         }
         else
@@ -58,7 +58,7 @@ int main(int argc, char **argv)
             ROS_WARN("************ Failed to read from IMU ************");
         }
 
-        std::this_thread::sleep_for(20ms); // 50 Hz
+        std::this_thread::sleep_for(1s); // 1 Hz
     }
 
     return EXIT_SUCCESS;

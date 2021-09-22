@@ -61,6 +61,7 @@ namespace Sensors
 
         enum Register
         {
+            SMPLRT_DIV = 0x19,
             GYRO_CONFIG = 0x27,
             ACCEL_CONFIG = 0x28,
             ACCEL_XOUT_H = 0x3B,
