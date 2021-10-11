@@ -15,7 +15,7 @@ extern "C"
 
 namespace Sensors
 {
-    MPU_6050::MPU_6050(uint8_t i2c_bus, uint8_t i2c_slave_address)
+    MPU_6050::MPU_6050(uint8_t i2c_bus, uint8_t i2c_slave_address, GyroscopeRange grange, AccelerometerRange arange)
     {
         std::string file = "/dev/i2c-" + std::to_string(i2c_bus);
         if ((m_fd = open(file.c_str(), O_RDWR)) < 0)
@@ -28,17 +28,30 @@ namespace Sensors
             throw std::runtime_error("unable to initiate i2c communication with slave " + i2c_slave_address);
         }
 
-        // set sample rate to 1khz
         if (!WriteRegister(Register::SMPLRT_DIV, 7))
         {
             throw std::runtime_error("unable to set IMU sample rate");
         }
-        // turn on IMU
         if (!WriteRegister(Register::PWR_MGMT_1, 1))
         {
-            throw std::runtime_error("Start collecting data");
+            throw std::runtime_error("could not turn on IMU");
         }
-        
+        if (!WriteRegister(Register::CONFIG, 0))
+        {
+            throw std::runtime_error("could not write to config register");
+        }
+        if (!WriteRegister(Register::INT_ENABLE, 1))
+        {
+            throw std::runtime_error("could not write to interrupt register");
+        }
+        if (!SetGyroRange(grange))
+        {
+            throw std::runtime_error("could not set gyro range");
+        }
+        if (!SetAccelRange(arange))
+        {
+            throw std::runtime_error("could not set accel range");
+        }
     }
 
     bool MPU_6050::SetGyroRange(MPU_6050::GyroscopeRange range)

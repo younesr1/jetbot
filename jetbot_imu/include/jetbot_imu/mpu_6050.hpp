@@ -22,14 +22,8 @@ namespace Sensors
             RANGE_1000DEG_PER_SEC = 0x10,
             RANGE_2000DEG_PER_SEC = 0x18
         };
-
-        MPU_6050(uint8_t i2c_bus, uint8_t i2c_slave_address);
-
-        // Configure gyroscope range
-        bool SetGyroRange(GyroscopeRange range);
-
-        // Configure accelerometer range
-        bool SetAccelRange(AccelerometerRange range);
+        // younes todo add defautls for ranges
+        MPU_6050(uint8_t i2c_bus, uint8_t i2c_slave_address, GyroscopeRange grange = GyroscopeRange::RANGE_250DEG_PER_SEC, AccelerometerRange arange = AccelerometerRange::RANGE_2G);
 
         // Read angular velocity in rad/s
         bool ReadGyroscope(Eigen::Vector3d &theta_dot);
@@ -62,8 +56,10 @@ namespace Sensors
         enum Register
         {
             SMPLRT_DIV = 0x19,
+            CONFIG = 0x1A,
             GYRO_CONFIG = 0x27,
             ACCEL_CONFIG = 0x28,
+            INT_ENABLE = 0X38,
             ACCEL_XOUT_H = 0x3B,
             ACCEL_XOUT_L = 0x3C,
             ACCEL_YOUT_H = 0x3D,
@@ -102,5 +98,11 @@ namespace Sensors
         bool WriteRegister(int8_t target_register, int8_t data);
 
         int16_t ConcactenateBytes(int8_t high, int8_t low) const;
+
+        // Configure gyroscope range
+        bool SetGyroRange(GyroscopeRange range);
+
+        // Configure accelerometer range
+        bool SetAccelRange(AccelerometerRange range);
     };
 }

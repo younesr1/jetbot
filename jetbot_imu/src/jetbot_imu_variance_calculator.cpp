@@ -19,18 +19,7 @@ int main(int argc, char **argv)
     constexpr auto slave_address = 0x68, bus_num = 0;
     ROS_INFO_STREAM("Contacting IMU at address " << slave_address << " on i2c bus " << bus_num);
 
-    Sensors::MPU_6050 imu(bus_num, slave_address);
-    if (!imu.SetAccelRange(Sensors::MPU_6050::AccelerometerRange::RANGE_2G))
-    {
-        ROS_FATAL("Unable to set range of accelerometer");
-        return EXIT_FAILURE;
-    }
-
-    if (!imu.SetGyroRange(Sensors::MPU_6050::GyroscopeRange::RANGE_250DEG_PER_SEC))
-    {
-        ROS_FATAL("Unable to set range of gyroscope");
-        return EXIT_FAILURE;
-    }
+    Sensors::MPU_6050 imu(bus_num, slave_address, Sensors::MPU_6050::GyroscopeRange::RANGE_250DEG_PER_SEC, Sensors::MPU_6050::AccelerometerRange::RANGE_2G);
 
     ROS_INFO("IMU reached successfully. Beginning data capture in 3 seconds. Make sure IMU is STILL");
     for (int i = 3; i > 0; i++)

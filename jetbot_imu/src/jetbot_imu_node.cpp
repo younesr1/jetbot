@@ -30,18 +30,7 @@ int main(int argc, char **argv)
 
     ROS_INFO_STREAM("Contacting IMU at address " << slave_address << " on i2c bus " << bus_num);
 
-    Sensors::MPU_6050 imu(bus_num, slave_address);
-    if (!imu.SetAccelRange(StringToAccelRange(accel_range)))
-    {
-        ROS_FATAL("Unable to set range of accelerometer");
-        ros::shutdown();
-    }
-
-    if (!imu.SetGyroRange(StringToGyroRange(gyro_range)))
-    {
-        ROS_FATAL("Unable to set range of gyroscope");
-        ros::shutdown();
-    }
+    Sensors::MPU_6050 imu(bus_num, slave_address, StringToGyroRange(gyro_range), StringToAccelRange(accel_range));
 
     /*
 	 * advertise publisher topics
