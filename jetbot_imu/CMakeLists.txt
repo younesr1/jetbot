@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.0.2)
 project(jetbot_imu)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
-# add_compile_options(-std=c++11)
+add_compile_options(-std=c++17)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -137,6 +137,8 @@ add_library(mpu_6050
 add_executable(${PROJECT_NAME}_node src/jetbot_imu_node.cpp)
 add_executable(${PROJECT_NAME}_echo src/jetbot_imu_echo.cpp)
 add_executable(${PROJECT_NAME}_variance_calculator src/jetbot_imu_variance_calculator.cpp)
+add_executable(${PROJECT_NAME}_rotation_calculator src/jetbot_imu_rotation_calculator.cpp)
+
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -149,6 +151,8 @@ set_target_properties(${PROJECT_NAME}_node PROPERTIES OUTPUT_NAME node PREFIX ""
 add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(${PROJECT_NAME}_echo ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(${PROJECT_NAME}_variance_calculator ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(${PROJECT_NAME}_rotation_calculator ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(mpu_6050
@@ -164,6 +168,9 @@ target_link_libraries(${PROJECT_NAME}_echo
 )
 target_link_libraries(${PROJECT_NAME}_variance_calculator
   mpu_6050
+  ${catkin_LIBRARIES}
+)
+target_link_libraries(${PROJECT_NAME}_rotation_calculator
   ${catkin_LIBRARIES}
 )
 

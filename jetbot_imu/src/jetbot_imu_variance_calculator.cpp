@@ -10,6 +10,8 @@ using namespace std::literals::chrono_literals;
 
 constexpr auto SAMPLES = 1000;
 
+// younes todo this node should just subscribe to IMU msgs, not create an imu object
+
 double Variance(std::array<double, SAMPLES> data);
 
 int main(int argc, char **argv)

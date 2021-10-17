@@ -8,7 +8,7 @@ Sensors::MPU_6050::AccelerometerRange StringToAccelRange(const std::string &rang
 
 Sensors::MPU_6050::GyroscopeRange StringToGyroRange(const std::string &range);
 
-// node main loop
+// node main loop younes todo add launch file
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "jetbot_imu");

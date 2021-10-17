@@ -6,6 +6,8 @@
 
 using namespace std::literals::chrono_literals;
 
+// younes todo this node should just subscribe to IMU msgs, not create an imu object
+
 int main(int argc, char **argv)
 {
 
