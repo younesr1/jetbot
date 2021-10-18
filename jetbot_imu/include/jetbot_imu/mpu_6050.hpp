@@ -57,8 +57,8 @@ namespace Sensors
         {
             SMPLRT_DIV = 0x19,
             CONFIG = 0x1A,
-            GYRO_CONFIG = 0x27,
-            ACCEL_CONFIG = 0x28,
+            GYRO_CONFIG = 0x1B,
+            ACCEL_CONFIG = 0x1C,
             INT_ENABLE = 0X38,
             ACCEL_XOUT_H = 0x3B,
             ACCEL_XOUT_L = 0x3C,
