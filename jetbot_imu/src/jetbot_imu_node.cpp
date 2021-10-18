@@ -19,7 +19,7 @@ int main(int argc, char **argv)
 	 */
     int bus_num, slave_address, buffer, freq;
     std::string imu_topic, temp_topic, gyro_range, accel_range;
-    nh.param<int>("/jetbot_imu/bus_number", bus_num, 1);
+    nh.param<int>("/jetbot_imu/bus_number", bus_num, 0);
     nh.param<int>("/jetbot_imu/frequency", freq, 50);
     nh.param<int>("/jetbot_imu/imu_slave_address", slave_address, 0x68);
     nh.param<int>("/jetbot_imu/buffer_size", buffer, 10);
