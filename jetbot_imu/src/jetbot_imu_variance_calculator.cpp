@@ -1,10 +1,11 @@
-#include <jetbot_imu/mpu_6050.hpp>
 #include <ros/ros.h>
 #include <thread>
 #include <chrono>
 #include <array>
 #include <algorithm>
 #include <numeric>
+
+#ifdef false
 
 using namespace std::literals::chrono_literals;
 
@@ -98,4 +99,9 @@ double Variance(std::array<double, SAMPLES> data)
     };
 
     return std::accumulate(data.begin(), data.end(), 0.0, variance_func);
+}
+#endif
+
+int main()
+{
 }

@@ -44,6 +44,8 @@ class MPU_6050:
 
     def __init__(self, bus_num: int, address: int, g_range: GyroscopeRange, a_range: AccelerometereRange) -> None:
         self._addr = address
+        self._grange = g_range
+        self._arange = a_range
         self._bus = smbus.bus(bus_num)
         # write to sample rate register
         self._bus.write_byte_data(self._addr, self._Register.SMPLRT_DIV, 7)
@@ -58,31 +60,50 @@ class MPU_6050:
             self._addr, self._Register.GYRO_CONFIG, g_range)
         # Set accel range
         self._bus.write_byte_data(
-            self._addr, self._Register.GYRO_CONFIG, a_range)
+            self._addr, self._Register.ACCEL_CONFIG, a_range)
 
-    def ReadGyroscope(self):
-        pass
+    def ReadGyroscope(self) -> Iterable:
+        gyro_scale_map = {self.GyroscopeRange.RANGE_250DEG_PER_SEC: 131.0,
+                          self.GyroscopeRange.RANGE_500DEG_PER_SEC: 65.5,
+                          self.GyroscopeRange.RANGE_1000DEG_PER_SEC: 32.8,
+                          self.GyroscopeRange.RANGE_2000DEG_PER_SEC: 16.4}
 
-    def ReadAccelerometer(self):
-        pass
+        x = self._ReadWord(self._Register.GYRO_XOUT_H,
+                           self._Register.GYRO_XOUT_L)
+        y = self._ReadWord(self._Register.GYRO_YOUT_H,
+                           self._Register.GYRO_YOUT_L)
+        z = self._ReadWord(self._Register.GYRO_ZOUT_H,
+                           self._Register.GYRO_ZOUT_L)
+        return np.array([x, y, z]) / gyro_scale_map[self._grange]
+
+    def ReadAccelerometer(self) -> Iterable:
+        accel_scale_map = {self.AccelerometereRange.RANGE_2G: 16384.0,
+                           self.AccelerometereRange.RANGE_4G: 8192.0,
+                           self.AccelerometereRange.RANGE_8G: 4096.0,
+                           self.AccelerometereRange.RANGE_16G: 2048.0}
+
+        x = self._ReadWord(self._Register.ACCEL_XOUT_H,
+                           self._Register.ACCEL_XOUT_L)
+        y = self._ReadWord(self._Register.ACCEL_YOUT_H,
+                           self._Register.ACCEL_YOUT_L)
+        z = self._ReadWord(self._Register.ACCEL_ZOUT_H,
+                           self._Register.ACCEL_ZOUT_L)
+        return np.array([x, y, z]) / accel_scale_map[self._arange]
 
     def ReadTemperature(self) -> float:
-        pass
+        return self._ReadWord(self._Register.TEMP_OUT_H, self._Register.TEMP_OUT_L) / 340.0 + 36.53
 
-    def GetGyroCovariance(self):
-        pass
+    def GetGyroCovariance(self) -> Iterable:
+        return np.zeros(9)
 
-    def GetAccelCovariance(self):
-        pass
+    def GetAccelCovariance(self) -> Iterable:
+        return np.zeros(9)
 
     def GetTempVariance(self) -> float:
-        pass
+        return 0.
 
-    def Reset(self) -> None:
-        pass
-
-    def ReadID(self) -> None:
-        pass
+    def ReadID(self) -> int:
+        return self._bus.read_byte_data(self._addr, self._Register.WHOAMI)
 
     def _ReadWord(self, lower: _Register, upper: _Register) -> int:
         # Accelero and Gyro value are 16-bit

@@ -22,8 +22,6 @@ WHOAMI = 0x75
  
  
 def MPU_Init():
-    pass
-    
     #write to sample rate register
     bus.write_byte_data(Device_Address, SMPLRT_DIV, 7)
     
