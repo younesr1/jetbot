@@ -88,7 +88,7 @@ class MPU_6050:
                            self._Register.ACCEL_YOUT_L)
         z = self._ReadWord(self._Register.ACCEL_ZOUT_H,
                            self._Register.ACCEL_ZOUT_L)
-        return np.array([x, y, z]) / accel_scale_map[self._arange]
+        return np.array([x, y, z]) / accel_scale_map[self._arange] * 9.81
 
     def ReadTemperature(self) -> float:
         return self._ReadWord(self._Register.TEMP_OUT_H, self._Register.TEMP_OUT_L) / 340.0 + 36.53
@@ -105,7 +105,7 @@ class MPU_6050:
     def ReadID(self) -> int:
         return self._bus.read_byte_data(self._addr, self._Register.WHOAMI)
 
-    def _ReadWord(self, lower: _Register, upper: _Register) -> int:
+    def _ReadWord(self, upper: _Register, lower: _Register) -> int:
         # Accelero and Gyro value are 16-bit
         high = self._bus.read_byte_data(self._addr, upper)
         low = self._bus.read_byte_data(self._addr, lower)
