@@ -1,24 +1,24 @@
 #!/usr/bin/python3
 from typing import Iterable
 import numpy as np
-from enum import Enum
+from enum import IntEnum
 import smbus
 
 
 class MPU_6050:
-    class AccelerometereRange(Enum):
+    class AccelerometereRange(IntEnum):
         RANGE_2G = 0x00,
         RANGE_4G = 0x08,
         RANGE_8G = 0x10,
         RANGE_16G = 0x18
 
-    class GyroscopeRange(Enum):
+    class GyroscopeRange(IntEnum):
         RANGE_250DEG_PER_SEC = 0x00,
         RANGE_500DEG_PER_SEC = 0x08,
         RANGE_1000DEG_PER_SEC = 0x10,
         RANGE_2000DEG_PER_SEC = 0x18
 
-    class _Register(Enum):
+    class _Register(IntEnum):
         SMPLRT_DIV = 0x19,
         CONFIG = 0x1A,
         GYRO_CONFIG = 0x27,
@@ -46,7 +46,7 @@ class MPU_6050:
         self._addr = address
         self._grange = g_range
         self._arange = a_range
-        self._bus = smbus.bus(bus_num)
+        self._bus = smbus.SMBus(bus_num)
         # write to sample rate register
         self._bus.write_byte_data(self._addr, self._Register.SMPLRT_DIV, 7)
         # Write to power management register

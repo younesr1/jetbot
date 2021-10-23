@@ -2,7 +2,9 @@
 from mpu_6050 import MPU_6050
 import rospy
 import numpy as np
-import sensor_msgs
+from sensor_msgs.msg import Imu, Temperature
+from geometry_msgs.msg import Vector3
+from typing import Iterable
 
 
 def StringToGyroRange(range: str) -> MPU_6050.GyroscopeRange:
@@ -18,6 +20,10 @@ def StringToAccelRange(range: str) -> MPU_6050.AccelerometereRange:
             "8G": MPU_6050.AccelerometereRange.RANGE_8G,
             "16G": MPU_6050.AccelerometereRange.RANGE_16G}.get(range)
 
+def NpArrayToVector3(np: Iterable) -> Iterable:
+    ret = Vector3()
+    ret.x, ret.y, ret.z = np
+    return ret
 
 def main():
     # younes todo get thsese from param server
@@ -35,23 +41,23 @@ def main():
         f"Contacting IMU at address {slave_address} on bus {bus_num}")
     imu = MPU_6050(bus_num, slave_address, StringToGyroRange(
         gyro_range), StringToAccelRange(accel_range))
-    imu_pub = rospy.Publisher(imu_topic, sensor_msgs.msgs.Imu, buffer)
+    imu_pub = rospy.Publisher(imu_topic,Imu, queue_size = buffer)
     temperature_pub = rospy.Publisher(
-        temp_topic, sensor_msgs.msgs.Temperature, buffer)
+        temp_topic,Temperature, queue_size = buffer)
 
     rate = rospy.Rate(freq)
     while not rospy.is_shutdown():
-        imu_msg = sensor_msgs.msgs.Imu()
-        imu_msg.angular_velocity = imu.ReadGyroscope()
-        imu_msg.angular_velocity_covariance = imu.GetGyroCovariance()
-        imu_msg.linear_acceleration = imu.ReadAccelerometer()
-        imu_msg.linear_acceleration_covariance = imu.GetAccelCovariance()
+        imu_msg =Imu()
+        imu_msg.angular_velocity = NpArrayToVector3(imu.ReadGyroscope())
+        imu_msg.angular_velocity_covariance = imu.GetGyroCovariance().tolist()
+        imu_msg.linear_acceleration = NpArrayToVector3(imu.ReadAccelerometer())
+        imu_msg.linear_acceleration_covariance = imu.GetAccelCovariance().tolist()
         # MPU-6050 gives no orientation reading
-        imu_msg.orientation_covariance = np.zeros(9)
+        imu_msg.orientation_covariance = np.zeros(9).tolist()
         imu_msg.orientation_covariance[0] = -1
         imu_pub.publish(imu_msg)
 
-        temperature_msg = sensor_msgs.msgs.Temperature()
+        temperature_msg =Temperature()
         temperature_msg.temperature = imu.ReadTemperature()
         temperature_msg.variance = imu.GetTempVariance()
         temperature_pub.publish(temperature_msg)
@@ -59,7 +65,7 @@ def main():
         rate.sleep()
 
 
-if __name__ == 'main':
+if __name__ == "__main__":
     try:
         main()
     except rospy.ROSInterruptException:
