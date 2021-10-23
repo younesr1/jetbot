@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python3
 from mpu_6050 import MPU_6050
 import rospy
 import numpy as np
