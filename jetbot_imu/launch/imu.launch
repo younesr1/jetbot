@@ -1,0 +1,12 @@
+<launch>
+  <node name="jetbot_imu" pkg="jetbot_imu" type="node.py" >
+    <param name="bus_number" type="int" value="0" />
+    <param name="frequency" type="int" value="50" />
+    <param name="slave_address" type="int" value="0x68" />
+    <param name="buffer_size" type="int" value="100" />
+    <param name="imu_topic" type="string" value="/imu/raw/data" />
+    <param name="temp_topic" type="string" value="/imu/raw/temperature" />
+    <param name="gyro_range" type="string" value="250" />
+    <param name="accel_range" type="string" value="2G" />
+  </node>
+</launch>

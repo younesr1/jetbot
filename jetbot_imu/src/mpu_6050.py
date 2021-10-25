@@ -4,7 +4,6 @@ import numpy as np
 from enum import IntEnum
 import smbus
 
-
 class MPU_6050:
     class AccelerometereRange(IntEnum):
         RANGE_2G = 0x00,
@@ -74,7 +73,7 @@ class MPU_6050:
                            self._Register.GYRO_YOUT_L)
         z = self._ReadWord(self._Register.GYRO_ZOUT_H,
                            self._Register.GYRO_ZOUT_L)
-        return np.array([x, y, z]) / gyro_scale_map[self._grange]
+        return np.radians(np.array([x, y, z]) / gyro_scale_map[self._grange])
 
     def ReadAccelerometer(self) -> Iterable:
         accel_scale_map = {self.AccelerometereRange.RANGE_2G: 16384.0,
