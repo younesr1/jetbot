@@ -1,0 +1,16 @@
+CALIBRATION COMPLETE!
+Median and Variance Values
+Gyroscope Medians: {-0.00479632, -0.00373047, -0.065683}
+Gyroscope Variances: {2.10816e-06, 2.59068e-06, 6.79929e-05}
+Accelerometer Medians: {0.778381, -7.80058, 6.2989}
+Accelerometer Variances: {0.00105985, 0.00224151, 0.00295389}
+Temperature Variances: 0.0511839 
+IMU Pose Relative to Robot
+[ INFO] [1635223217.057098075]: Computed Rotation Matrix: 
+  0.983966   0.160686  0.0774016
+  0.160686  -0.610324  -0.775683
+-0.0774016   0.775683  -0.626358
+[ INFO] [1635223217.057261056]: Compute Euler Angles (Degrees): 
+128.921
+4.43923
+-9.2748
