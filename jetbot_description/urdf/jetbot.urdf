@@ -32,6 +32,12 @@
     <axis xyz="0.96891 0      0.2474"/>
     <limit lower="0" upper="0" effort="0" velocity="0"/>
   </joint>
+  <joint name="imu_link" type="fixed">
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <parent link="JetBot__chassis" />
+    <child link="JetBot__imu_link" />
+    <axis xyz="0 0 0" />
+  </joint>
   <link name="odom" />
   <link name="base_link"></link>
   <link name="JetBot__chassis">
@@ -102,6 +108,17 @@
       <geometry>
         <box size="0.001 0.001 0.001"/>
       </geometry>
+    </visual>
+  </link>
+  <link name="JetBot__imu_link">
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://description/meshes/MPU-6050.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name="xsens_orange">
+        <color rgba="0.92 0.45 0.02 1.0"/>
+      </material>
     </visual>
   </link>
 </robot>
