@@ -73,7 +73,7 @@ int main(int argc, char **argv)
         float *imgRGBA = NULL;
 
         // get the latest frame
-        if (!camera->CaptureRGBA((&imgRGBA))
+        if (!camera->CaptureRGBA(&imgRGBA))
         {
             ROS_ERROR("failed to capture camera frame");
             continue;
@@ -86,25 +86,25 @@ int main(int argc, char **argv)
             continue;
         }
 
-        sensor_msgs:Image ros_rgb_img;
+        sensor_msgs::Image ros_rgb_img;
         // populate the message
         if (!camera_cvt->Convert(ros_rgb_img, imageConverter::ROSOutputFormat, imgRGBA))
         {
             ROS_ERROR("failed to convert camera frame to sensor_msgs::Image");
             continue;
         }
-           
+
         rgb_publisher.publish(ros_rgb_image);
         ROS_INFO("published rgb image frame");
 
         depth_net->Process(imgRGBA, camera->GetWidth(), camera->GetHeight());
         CUDA(cudaDeviceSynchronize());
-      
+
         sensor_msgs::Image ros_depth_img;
         if (!camera_cvt->Convert(ros_depth_img, imageConverter::ROSOutputFormat, imgRGBA))
         {
             ROS_ERROR("failed to convert camera frame to sensor_msgs::Image");
-            continue
+            continue;
         }
         depth_publisher.publish(ros_depth_img);
 
