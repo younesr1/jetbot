@@ -3,7 +3,6 @@
 #include <sensor_msgs/image_encodings.h>
 #include <jetson-inference/depthNet.h>
 #include <jetson-utils/gstCamera.h>
-#include <jetson-utils/cudaColormap.h>
 #include <camera/image_converter.hpp>
 #include <memory>
 

@@ -128,6 +128,10 @@ include_directories(
 # gstreamer related includes
 include_directories(/usr/include/gstreamer-1.0 /usr/include/glib-2.0 /usr/include/libxml2 /usr/lib/aarch64-linux-gnu/gstreamer-1.0/include /usr/lib/x86_64-linux-gnu/gstreamer-1.0/include/ /usr/lib/aarch64-linux-gnu/glib-2.0/include/ /usr/lib/x86_64-linux-gnu/glib-2.0/include/)
 
+# jetson-utils includes
+include_directories(
+  /usr/local/include/jetson-utils
+)
 
 ## Declare a C++ library
 add_library(image_converter
