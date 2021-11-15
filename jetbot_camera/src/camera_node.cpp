@@ -54,7 +54,8 @@ int main(int argc, char **argv)
      * advertise publisher rgb_topics
      */
     ros::Publisher rgb_publisher = nh.advertise<sensor_msgs::Image>(rgb_topic, buffer);
-    ros::Publisher depth_publisher = nh.advertise < sensor_msgs::Image(rgb_topic, buffer);
+    ros::Publisher depth_publisher = nh.advertise<sensor_msgs::Image>(depth_topic, buffer);
+
     /*
      * start the camera streaming
      */
@@ -72,8 +73,7 @@ int main(int argc, char **argv)
         float *imgRGBA = NULL;
 
         // get the latest frame
-        constexpr auto timeout = 1000; // ms
-        if (!camera->CaptureRGBA((&imgRGBA, timeout))
+        if (!camera->CaptureRGBA((&imgRGBA))
         {
             ROS_ERROR("failed to capture camera frame");
             continue;
