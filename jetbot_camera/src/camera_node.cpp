@@ -95,7 +95,7 @@ int main(int argc, char **argv)
             continue;
         }
 
-        rgb_publisher.publish(ros_rgb_image);
+        rgb_publisher.publish(ros_rgb_img);
         ROS_INFO("published rgb image frame");
 
         depth_net->Process(imgRGBA, camera->GetWidth(), camera->GetHeight());
