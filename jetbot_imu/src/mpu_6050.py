@@ -4,6 +4,7 @@ import numpy as np
 from enum import IntEnum
 import smbus
 
+
 class MPU_6050:
     class AccelerometereRange(IntEnum):
         RANGE_2G = 0x00,
@@ -93,13 +94,21 @@ class MPU_6050:
         return self._ReadWord(self._Register.TEMP_OUT_H, self._Register.TEMP_OUT_L) / 340.0 + 36.53
 
     def GetGyroCovariance(self) -> Iterable:
-        return np.zeros(9)
+        ret = np.zeros([3, 3])
+        ret[0, 0] = 2.10816e-06
+        ret[1, 1] = 2.59068e-06
+        ret[2, 2] = 6.79929e-05
+        return ret
 
     def GetAccelCovariance(self) -> Iterable:
-        return np.zeros(9)
+        ret = np.zeros([3, 3])
+        ret[0, 0] = 0.00105985
+        ret[1, 1] = 0.00224151
+        ret[2, 2] = 0.00295389
+        return ret
 
     def GetTempVariance(self) -> float:
-        return 0.
+        return 0.0511839
 
     def ReadID(self) -> int:
         return self._bus.read_byte_data(self._addr, self._Register.WHOAMI)
