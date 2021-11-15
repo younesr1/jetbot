@@ -70,10 +70,11 @@ int main(int argc, char **argv)
      */
     while (ros::ok())
     {
-        float *imgRGBA = NULL;
+        float4 *imgRGBA = NULL;
 
         // get the latest frame
-        if (!camera->CaptureRGBA(&imgRGBA))
+        constexpr auto TIMEOUT = 1000;
+        if (!camera->CaptureRGBA((float **)&imgRGBA, TIMEOUT))
         {
             ROS_ERROR("failed to capture camera frame");
             continue;
