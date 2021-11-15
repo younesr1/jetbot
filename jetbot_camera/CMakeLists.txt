@@ -166,6 +166,7 @@ target_link_libraries(${PROJECT_NAME}_node
 
 target_link_libraries(image_converter
   jetson-utils
+  jetson-inference
 )
 
 #############

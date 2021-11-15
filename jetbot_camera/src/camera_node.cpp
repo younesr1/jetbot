@@ -99,7 +99,7 @@ int main(int argc, char **argv)
         ROS_INFO("published rgb image frame");
 
         depth_net->Process(imgRGBA, camera->GetWidth(), camera->GetHeight());
-        CUDA(cudaDeviceSynchronize());
+        CUDA(cudaDeviceSynchronize()); // younes todo this is causing the node to run slow
 
         sensor_msgs::Image ros_depth_img;
         if (!camera_cvt->Convert(ros_depth_img, imageConverter::ROSOutputFormat, imgRGBA))
@@ -108,6 +108,7 @@ int main(int argc, char **argv)
             continue;
         }
         depth_publisher.publish(ros_depth_img);
+        ROS_INFO("published depth image frame");
 
         ros::spinOnce();
     }
