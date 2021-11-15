@@ -1,59 +1,11 @@
-/*
- * Copyright (c) 2019, NVIDIA CORPORATION. All rights reserved.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a
- * copy of this software and associated documentation files (the "Software"),
- * to deal in the Software without restriction, including without limitation
- * the rights to use, copy, modify, merge, publish, distribute, sublicense,
- * and/or sell copies of the Software, and to permit persons to whom the
- * Software is furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
- * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
- * DEALINGS IN THE SOFTWARE.
- */
-
 #include <ros/ros.h>
 #include <sensor_msgs/Image.h>
 #include <sensor_msgs/image_encodings.h>
-#include <memory>
+#include <jetson-inference/depthNet.h>
 #include <jetson-utils/gstCamera.h>
-#include "camera/image_converter.hpp"
-
-bool GrabImage(gstCamera *camera, std::unique_ptr<imageConverter> &camera_cvt, sensor_msgs::Image &img)
-{
-    float4 *imgRGBA = NULL;
-
-    // get the latest frame
-    constexpr auto timeout = 1000; //ms
-    if (!camera->CaptureRGBA((float **)&imgRGBA, timeout))
-    {
-        ROS_ERROR("failed to capture camera frame");
-        return false;
-    }
-
-    // assure correct image size
-    if (!camera_cvt->Resize(camera->GetWidth(), camera->GetHeight(), IMAGE_RGBA32F))
-    {
-        ROS_ERROR("failed to resize camera image converter");
-        return false;
-    }
-
-    // populate the message
-    if (!camera_cvt->Convert(img, imageConverter::ROSOutputFormat, imgRGBA))
-    {
-        ROS_ERROR("failed to convert camera frame to sensor_msgs::Image");
-        return false;
-    }
-    return true;
-}
+#include <jetson-utils/cudaColormap.h>
+#include <camera/image_converter.hpp>
+#include <memory>
 
 // node main loop
 int main(int argc, char **argv)
@@ -62,23 +14,25 @@ int main(int argc, char **argv)
     ros::NodeHandle nh;
 
     /*
-	 * retrieve parameters
-	 */
-    std::string camera_device, topic;
+     * retrieve parameters
+     */
+    std::string camera_device, rgb_topic, depth_topic;
     int buffer;
     nh.param<std::string>("/jetbot_camera/device", camera_device, "csi://0");
-    nh.param<std::string>("/jetbot_camera/topic", topic, "/camera/image/raw");
+    nh.param<std::string>("/jetbot_camera/rgb_topic", rgb_topic, "/camera/image/raw/rgb");
+    nh.param<std::string>("/jetbot_camera/depth_topic", depth_topic, "/camera/image/raw/depth");
     nh.param<int>("/jetbot_camera/buffer_size", buffer, 10);
 
     ROS_INFO("opening camera device %s", camera_device.c_str());
 
     /*
-	 * open camera device
-	 */
+     * open camera device
+     */
     videoOptions opt;
     opt.flipMethod = videoOptions::FLIP_ROTATE_180;
     opt.resource = camera_device.c_str();
     auto camera = gstCamera::Create(opt);
+    auto depth_net = depthNet::Create(); // younes todo look into different constructors. specify which ML model to use?
 
     if (!camera)
     {
@@ -87,8 +41,8 @@ int main(int argc, char **argv)
     }
 
     /*
-	 * create image converter
-	 */
+     * create image converter
+     */
     auto camera_cvt = std::make_unique<imageConverter>();
 
     if (!camera_cvt)
@@ -98,12 +52,13 @@ int main(int argc, char **argv)
     }
 
     /*
-	 * advertise publisher topics
-	 */
-    ros::Publisher camera_publisher = nh.advertise<sensor_msgs::Image>(topic, buffer);
+     * advertise publisher rgb_topics
+     */
+    ros::Publisher rgb_publisher = nh.advertise<sensor_msgs::Image>(rgb_topic, buffer);
+    ros::Publisher depth_publisher = nh.advertise < sensor_msgs::Image(rgb_topic, buffer);
     /*
-	 * start the camera streaming
-	 */
+     * start the camera streaming
+     */
     if (!camera->Open())
     {
         ROS_ERROR("failed to start camera streaming");
@@ -111,16 +66,48 @@ int main(int argc, char **argv)
     }
 
     /*
-	 * start publishing video frames
-	 */
+     * start publishing video frames
+     */
     while (ros::ok())
     {
-        sensor_msgs::Image msg;
-        if (GrabImage(camera, camera_cvt, msg))
+        float *imgRGBA = NULL;
+
+        // get the latest frame
+        constexpr auto timeout = 1000; // ms
+        if (!camera->CaptureRGBA((&imgRGBA, timeout))
         {
-            camera_publisher.publish(msg);
-            ROS_INFO("published camera frame");
+            ROS_ERROR("failed to capture camera frame");
+            continue;
         }
+
+        // assure correct image size
+        if (!camera_cvt->Resize(camera->GetWidth(), camera->GetHeight(), IMAGE_RGBA32F))
+        {
+            ROS_ERROR("failed to resize camera image converter");
+            continue;
+        }
+
+        sensor_msgs:Image ros_rgb_img;
+        // populate the message
+        if (!camera_cvt->Convert(ros_rgb_img, imageConverter::ROSOutputFormat, imgRGBA))
+        {
+            ROS_ERROR("failed to convert camera frame to sensor_msgs::Image");
+            continue;
+        }
+           
+        rgb_publisher.publish(ros_rgb_image);
+        ROS_INFO("published rgb image frame");
+
+        depth_net->Process(imgRGBA, camera->GetWidth(), camera->GetHeight());
+        CUDA(cudaDeviceSynchronize());
+      
+        sensor_msgs::Image ros_depth_img;
+        if (!camera_cvt->Convert(ros_depth_img, imageConverter::ROSOutputFormat, imgRGBA))
+        {
+            ROS_ERROR("failed to convert camera frame to sensor_msgs::Image");
+            continue
+        }
+        depth_publisher.publish(ros_depth_img);
 
         ros::spinOnce();
     }
