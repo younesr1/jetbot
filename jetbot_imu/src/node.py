@@ -4,7 +4,11 @@ import rospy
 import numpy as np
 from sensor_msgs.msg import Imu, Temperature
 from geometry_msgs.msg import Vector3
-from typing import Iterable
+
+#YOUNES TODO DELETE THIS TEMPORARY CHANGE
+R = np.array([-0.0304216,  0.0424403,   0.998636,
+ 0.0424403,   0.998252, -0.0411311,
+ -0.998636,  0.0411311, -0.0321696]).reshape(3,3)
 
 
 def StringToGyroRange(range: str) -> MPU_6050.GyroscopeRange:
@@ -21,7 +25,7 @@ def StringToAccelRange(range: str) -> MPU_6050.AccelerometereRange:
             "16G": MPU_6050.AccelerometereRange.RANGE_16G}.get(range)
 
 
-def NpArrayToVector3(np: Iterable) -> Iterable:
+def NpArrayToVector3(np: np.array) -> Vector3:
     ret = Vector3()
     ret.x, ret.y, ret.z = np
     return ret
@@ -50,10 +54,10 @@ def main():
     rate = rospy.Rate(freq)
     while not rospy.is_shutdown():
         imu_msg = Imu()
-        imu_msg.angular_velocity = NpArrayToVector3(imu.ReadGyroscope())
-        imu_msg.angular_velocity_covariance = imu.GetGyroCovariance().tolist()
-        imu_msg.linear_acceleration = NpArrayToVector3(imu.ReadAccelerometer())
-        imu_msg.linear_acceleration_covariance = imu.GetAccelCovariance().tolist()
+        imu_msg.angular_velocity = NpArrayToVector3(R * imu.ReadGyroscope())
+        imu_msg.angular_velocity_covariance = imu.GetGyroCovariance().reshape(9).tolist()
+        imu_msg.linear_acceleration = NpArrayToVector3(R * imu.ReadAccelerometer())
+        imu_msg.linear_acceleration_covariance = imu.GetAccelCovariance().reshape(9).tolist()
         # MPU-6050 gives no orientation reading
         imu_msg.orientation_covariance = np.zeros(9).tolist()
         imu_msg.orientation_covariance[0] = -1

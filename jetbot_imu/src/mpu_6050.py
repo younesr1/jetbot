@@ -1,5 +1,4 @@
 #!/usr/bin/python3
-from typing import Iterable
 import numpy as np
 from enum import IntEnum
 import smbus
@@ -62,7 +61,7 @@ class MPU_6050:
         self._bus.write_byte_data(
             self._addr, self._Register.ACCEL_CONFIG, a_range)
 
-    def ReadGyroscope(self) -> Iterable:
+    def ReadGyroscope(self) -> np.array:
         gyro_scale_map = {self.GyroscopeRange.RANGE_250DEG_PER_SEC: 131.0,
                           self.GyroscopeRange.RANGE_500DEG_PER_SEC: 65.5,
                           self.GyroscopeRange.RANGE_1000DEG_PER_SEC: 32.8,
@@ -76,7 +75,7 @@ class MPU_6050:
                            self._Register.GYRO_ZOUT_L)
         return np.radians(np.array([x, y, z]) / gyro_scale_map[self._grange])
 
-    def ReadAccelerometer(self) -> Iterable:
+    def ReadAccelerometer(self) -> np.array:
         accel_scale_map = {self.AccelerometereRange.RANGE_2G: 16384.0,
                            self.AccelerometereRange.RANGE_4G: 8192.0,
                            self.AccelerometereRange.RANGE_8G: 4096.0,
@@ -93,14 +92,14 @@ class MPU_6050:
     def ReadTemperature(self) -> float:
         return self._ReadWord(self._Register.TEMP_OUT_H, self._Register.TEMP_OUT_L) / 340.0 + 36.53
 
-    def GetGyroCovariance(self) -> Iterable:
+    def GetGyroCovariance(self) -> np.array:
         ret = np.zeros([3, 3])
         ret[0, 0] = 2.10816e-06
         ret[1, 1] = 2.59068e-06
         ret[2, 2] = 6.79929e-05
         return ret
 
-    def GetAccelCovariance(self) -> Iterable:
+    def GetAccelCovariance(self) -> np.array:
         ret = np.zeros([3, 3])
         ret[0, 0] = 0.00105985
         ret[1, 1] = 0.00224151

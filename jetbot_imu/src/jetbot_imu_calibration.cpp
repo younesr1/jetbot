@@ -8,7 +8,7 @@
 /*
   This program attempts to find a rotation matrix, R, which rotates the
   acceleration vector, a, such that it is parallel to the z-axis.
-  Mathematically: cross(Ra, -k^) == [0, 0, 0]
+  Mathematically: cross(Ra, -k^) == [0, 0, 0] && |Ra| == |a|
 
   This program also computes the covariance matrix of the gyroscope and accelerometer readings.
   Finally, it also produces the median values of each axis reading of both accelerometer and gyroscope readings.
@@ -46,7 +46,6 @@ int main(int argc, char **argv)
     std::sort(data.gyroscope_x.begin(), data.gyroscope_x.end());
     std::sort(data.gyroscope_y.begin(), data.gyroscope_y.end());
     std::sort(data.gyroscope_z.begin(), data.gyroscope_z.end());
-    std::sort(data.temperature.begin(), data.temperature.end());
 
     // Compute median values of all data sources
     const double median_accelerometer_x = data.accelerometer_x.at(data.accelerometer_x.size() / 2);
