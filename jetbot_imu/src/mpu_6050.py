@@ -87,7 +87,7 @@ class MPU_6050:
                            self._Register.ACCEL_YOUT_L)
         z = self._ReadWord(self._Register.ACCEL_ZOUT_H,
                            self._Register.ACCEL_ZOUT_L)
-        return np.array([x, y, z]) / accel_scale_map[self._arange] * 9.81
+        return np.array([x, y, z]) / accel_scale_map[self._arange] * -9.81
 
     def ReadTemperature(self) -> float:
         return self._ReadWord(self._Register.TEMP_OUT_H, self._Register.TEMP_OUT_L) / 340.0 + 36.53
