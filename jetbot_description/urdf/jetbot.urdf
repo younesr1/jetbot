@@ -33,7 +33,7 @@
     <limit lower="0" upper="0" effort="0" velocity="0"/>
   </joint>
   <joint name="JetBot__imu_joint" type="fixed">
-    <origin xyz="-0.065 0.035 0.017" rpy="0 1.57079 0" />
+    <origin xyz="-0.065 0.035 0.017" rpy="1.57079 0 1.57079" />
     <parent link="JetBot__chassis" />
     <child link="JetBot__imu_link" />
     <axis xyz="0 0 0" />
@@ -113,17 +113,17 @@
   <link name="JetBot__imu_link">
     <inertial>
       <mass value="0"/>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <origin xyz="0 0 0" rpy="0 0 -1.57079"/>
       <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0"/>
     </inertial>
     <collision name="JetBot__collision">
-      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <origin xyz="0 0 0" rpy="0 0 -1.57079"/>
       <geometry>
         <mesh filename="package://jetbot_description/meshes/MPU-6050.stl" scale="0.023 0.023 0.023"/>
       </geometry>
     </collision>
     <visual name="JetBot__visual">
-      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <origin xyz="0 0 0" rpy="0 0 -1.57079"/>
       <geometry>
         <mesh filename="package://jetbot_description/meshes/MPU-6050.stl" scale="0.023 0.023 0.023"/>
       </geometry>

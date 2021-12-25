@@ -79,8 +79,6 @@ int main(int argc, char **argv)
     ROS_INFO("\nIMU Pose Relative to Robot");
     ROS_INFO_STREAM("Computed Rotation Matrix: \n"
                     << rot);
-    ROS_INFO_STREAM("Compute Euler Angles (Degrees): \n"
-                    << rot.eulerAngles(0, 1, 2) * 180 / M_PI);
 
     return EXIT_SUCCESS;
 }
