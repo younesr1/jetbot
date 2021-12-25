@@ -32,8 +32,8 @@
     <axis xyz="0.96891 0      0.2474"/>
     <limit lower="0" upper="0" effort="0" velocity="0"/>
   </joint>
-  <joint name="imu_link" type="fixed">
-    <origin xyz="0 0 0" rpy="0 0 0" />
+  <joint name="JetBot__imu_joint" type="fixed">
+    <origin xyz="-0.055 0.051215 0.03" rpy="125.311 87.2866 -123.066" />
     <parent link="JetBot__chassis" />
     <child link="JetBot__imu_link" />
     <axis xyz="0 0 0" />

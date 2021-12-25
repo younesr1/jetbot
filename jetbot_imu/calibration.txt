@@ -1,16 +1,18 @@
-CALIBRATION COMPLETE!
-Median and Variance Values
-Gyroscope Medians: {-0.00479632, -0.00373047, -0.065683}
-Gyroscope Variances: {2.10816e-06, 2.59068e-06, 6.79929e-05}
-Accelerometer Medians: {0.778381, -7.80058, 6.2989}
-Accelerometer Variances: {0.00105985, 0.00224151, 0.00295389}
-Temperature Variances: 0.0511839 
+[ INFO] [1640391520.533365534]: #################################################################
+[ INFO] [1640391520.537695148]: CALIBRATION COMPLETE!
+[ INFO] [1640391520.537771712]: Median and Variance Values
+[ INFO] [1640391520.537871349]: Gyroscope Medians: {-0.00572894, -0.00572894, -0.0648836}
+[ INFO] [1640391520.537947236]: Gyroscope Variances: {3.87795e-06, 2.82826e-06, 3.49289e-05}
+[ INFO] [1640391520.538010988]: Accelerometer Medians: {10.404, -0.402363, 0.285007}
+[ INFO] [1640391520.538072082]: Accelerometer Variances: {0.00234498, 0.000652116, 0.0025649}
+[ INFO] [1640391520.538128073]: Temperature Variances: 0.00259481
+[ INFO] [1640391520.538177657]: 
 IMU Pose Relative to Robot
-[ INFO] [1635223217.057098075]: Computed Rotation Matrix: 
-  0.983966   0.160686  0.0774016
-  0.160686  -0.610324  -0.775683
--0.0774016   0.775683  -0.626358
-[ INFO] [1635223217.057261056]: Compute Euler Angles (Degrees): 
-128.921
-4.43923
--9.2748
+[ INFO] [1640391520.538324848]: Computed Rotation Matrix: 
+-0.0258291  0.0396729   0.998879
+ 0.0396729   0.998466 -0.0386307
+ -0.998879  0.0386307 -0.0273634
+[ INFO] [1640391520.538509539]: Compute Euler Angles (Degrees): 
+ 125.311
+ 87.2866
+-123.066
