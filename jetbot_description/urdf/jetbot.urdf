@@ -14,14 +14,14 @@
   <joint name="JetBot__left_wheel_hinge" type="continuous">
     <parent link="JetBot__chassis"/>
     <child link="JetBot__left_wheel"/>
-    <origin xyz="0.03    0.05125 0.03" rpy="0      0      1.57079"/>
+    <origin xyz="0.03    0.0475 0.03" rpy="0      0      1.57079"/>
     <axis xyz="1 0 0"/>
     <limit effort="1" velocity="1"/>
   </joint>
   <joint name="JetBot__right_wheel_hinge" type="continuous">
     <parent link="JetBot__chassis"/>
     <child link="JetBot__right_wheel"/>
-    <origin xyz="0.03   -0.05125  0.03" rpy="0      0      1.57079"/>
+    <origin xyz="0.03   -0.056  0.03" rpy="0      0      1.57079"/>
     <axis xyz="1 0 0"/>
     <limit effort="1" velocity="1"/>
   </joint>
