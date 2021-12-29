@@ -2,4 +2,7 @@
   <include file="$(find jetbot_camera)/launch/camera.launch" />
   <include file="$(find jetbot_teleoperation)/launch/teleoperation.launch" />
   <include file="$(find jetbot_drive_controller)/launch/drive_controller.launch" />
+  <include file="$(find jetbot_description)/launch/description.launch" />
+  <include file="$(find jetbot_imu)/launch/imu.launch" />
+  <include file="$(find jetbot_transformer)/launch/transformer.launch" />
 </launch>
