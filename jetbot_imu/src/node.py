@@ -49,7 +49,7 @@ def main():
     rate = rospy.Rate(freq)
     while not rospy.is_shutdown():
         imu_msg = Imu()
-        imu_msg.header.frame_id = "JetBot__imu_link"
+        imu_msg.header.frame_id = "/JetBot__imu_link"
         imu_msg.header.stamp = rospy.get_rostime()
         imu_msg.angular_velocity = NpArrayToVector3(imu.ReadGyroscope())
         imu_msg.angular_velocity_covariance = imu.GetGyroCovariance().reshape(9).tolist()

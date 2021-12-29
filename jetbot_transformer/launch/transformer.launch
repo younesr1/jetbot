@@ -1,0 +1,6 @@
+<launch>
+  <node name="jetbot_transformer" pkg="jetbot_transformer" type="node.py" >
+    <param name="imu_topic" type="string" value="/imu/raw/data" />
+    <param name="transformed_imu_topic" type="string" value="/tf/transformed_imu/JetBot__chassis/raw/data" />
+  </node>
+</launch>
