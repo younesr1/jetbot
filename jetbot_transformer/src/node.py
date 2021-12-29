@@ -18,6 +18,7 @@ def main():
     _ = tf2.TransformListener(tf_buffer)
 
     def transformed_imu_callback(data: Imu) -> None:
+        # TODO: Find covariances for rotated imu data
         transform = tf_buffer.lookup_transform('JetBot__chassis', 'JetBot__imu_link', rospy.Time(0))
         
         transformed_imu_data = Imu()
