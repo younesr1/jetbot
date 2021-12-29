@@ -75,7 +75,6 @@ target_link_libraries(${PROJECT_NAME}_calibration
 ## Mark executable scripts (Python etc.) for installation
 ## in contrast to setup.py, you can choose the destination
 catkin_install_python(PROGRAMS
-  src/sanity.py
   src/node.py
   src/mpu_6050.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
