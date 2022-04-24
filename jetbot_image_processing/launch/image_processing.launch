@@ -1,0 +1,7 @@
+<launch>
+  <node name="jetbot_image_processing" pkg="jetbot_image_processing" type="node.py" >
+    <param name="rgb_image_topic" type="string" value="/camera/image/raw" />
+    <param name="raw_depth_topic" type="string" value="/camera/depth/raw" />
+    <param name="colorized_depth_topic" type="string" value="/camera/depth/colorized" />
+  </node>
+</launch>
