@@ -2,14 +2,12 @@
 import torch
 import rospy
 from sensor_msgs.msg import Image
-from cv_bridge import CvBridge
 import cv2
 import numpy as np
 
 class ImageProcessor():
     def __init__(self):
         # Monocular Depth Members
-        # younes todo remove unusable models
         model_type = ("MiDaS_small", "DPT_Hybrid", "DPT_Large")[0]
         self.midas = torch.hub.load("intel-isl/MiDaS", model_type)
         self.device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
@@ -17,6 +15,8 @@ class ImageProcessor():
         self.midas.eval()
         midas_transforms = torch.hub.load("intel-isl/MiDaS", "transforms")
         self.transform = midas_transforms.small_transform if model_type == "MiDaS_small" else midas_transforms.dpt_transform
+        
+        rospy.loginfo("Instantiated Monocular Depth Model")
 
         # ROS Members
         self.queue_size = 50
@@ -34,10 +34,9 @@ class ImageProcessor():
 
 
     def callback(self, rgb_image):
-        rgb_img_cv2 = self.bridge.imgmsg_to_cv2(rgb_image, "bgr8")
-        raw_depth, colorized_depth = self.monodepth(rgb_img_cv2)
-        self.colorized_depth_publisher.publish(self.bridge.cv2_to_imgmsg(colorized_depth, "bgr8"))
-        self.raw_depth_publisher.publish(self.bridge.cv2_to_imgmsg(raw_depth, "32FC1"))
+        raw_depth, colorized_depth = self.monodepth(self.img_msg_to_cv2(rgb_image))
+        self.colorized_depth_publisher.publish(self.cv2_to_img_msg(colorized_depth)) #(self.bridge.cv2_to_imgmsg(colorized_depth, "bgr8"))
+        self.raw_depth_publisher.publish(self.cv2_to_img_msg(raw_depth)) # (self.bridge.cv2_to_imgmsg(raw_depth, "32FC1"))
 
 
     def monodepth(self, rgb_image):
@@ -54,9 +53,20 @@ class ImageProcessor():
         colorized_depth = cv2.applyColorMap(cv2.normalize(raw_depth, None, 0, 255, cv2.NORM_MINMAX, cv2.CV_8U), cv2.COLORMAP_MAGMA)
         return raw_depth, colorized_depth
 
+    
+    def cv2_to_img_msg(self, img):
+        ret = Image()
+        # younes todo convert cv2 img to ros img msg
+
+    
+    def img_msg_to_cv2(self, img):
+        return np.frombuffer(img.data, dtype=np.uint8).reshape(img.height, img.width, -1)
+
 
 def main():
     rospy.init_node("jetbot_image_processing")
+
+    rospy.loginfo("Starting Jetbot Image Processing Node")
 
     ImageProcessor()
 
