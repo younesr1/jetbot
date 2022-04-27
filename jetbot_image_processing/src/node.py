@@ -33,10 +33,11 @@ class ImageProcessor():
 
 
     def callback(self, rgb_image):
+        #TODO: NN takes time to run. causes node to run at ~4 Hz
         raw_depth, colorized_depth = self.monodepth(self.img_msg_to_cv2(rgb_image))
-        self.colorized_depth_publisher.publish(self.cv2_to_img_msg(colorized_depth, rgb_image.header)) #(self.bridge.cv2_to_imgmsg(colorized_depth, "bgr8"))
+        self.colorized_depth_publisher.publish(self.cv2_to_img_msg(colorized_depth, rgb_image.header))
         rospy.loginfo("Published colorized depth")
-        self.raw_depth_publisher.publish(self.cv2_to_img_msg(raw_depth, rgb_image.header)) # (self.bridge.cv2_to_imgmsg(raw_depth, "32FC1"))
+        self.raw_depth_publisher.publish(self.cv2_to_img_msg(raw_depth, rgb_image.header))
         rospy.loginfo("Publushed raw depth")
 
 
