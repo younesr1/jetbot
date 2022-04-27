@@ -29,14 +29,15 @@ class ImageProcessor():
         rospy.Subscriber(self.rgb_image_topic, Image, self.callback)
         self.colorized_depth_publisher = rospy.Publisher(self.colorized_depth_topic, Image, queue_size=self.queue_size)
         self.raw_depth_publisher = rospy.Publisher(self.raw_depth_topic, Image, queue_size=self.queue_size)
-        self.bridge = CvBridge()
 
 
 
     def callback(self, rgb_image):
         raw_depth, colorized_depth = self.monodepth(self.img_msg_to_cv2(rgb_image))
-        self.colorized_depth_publisher.publish(self.cv2_to_img_msg(colorized_depth)) #(self.bridge.cv2_to_imgmsg(colorized_depth, "bgr8"))
-        self.raw_depth_publisher.publish(self.cv2_to_img_msg(raw_depth)) # (self.bridge.cv2_to_imgmsg(raw_depth, "32FC1"))
+        self.colorized_depth_publisher.publish(self.cv2_to_img_msg(colorized_depth, rgb_image.header)) #(self.bridge.cv2_to_imgmsg(colorized_depth, "bgr8"))
+        rospy.loginfo("Published colorized depth")
+        self.raw_depth_publisher.publish(self.cv2_to_img_msg(raw_depth, rgb_image.header)) # (self.bridge.cv2_to_imgmsg(raw_depth, "32FC1"))
+        rospy.loginfo("Publushed raw depth")
 
 
     def monodepth(self, rgb_image):
@@ -54,10 +55,20 @@ class ImageProcessor():
         return raw_depth, colorized_depth
 
     
-    def cv2_to_img_msg(self, img):
+    def cv2_to_img_msg(self, img, header):
         ret = Image()
-        # younes todo convert cv2 img to ros img msg
-
+        ret.header = header
+        ret.height, ret.width = img.shape[:2]
+        if  len(img.shape) == 2 and img.dtype == np.float32:
+            ret.encoding = "mono8"
+        elif img.shape[2] == 3 and img.dtype == np.uint8:
+            ret.encoding = "bgr8"
+        else:
+            rospy.logerr("Unrecognized image format in cv2_to_img_msg")
+        ret.is_bigendian = img.dtype.byteorder == '>'
+        ret.data = img.tostring()
+        ret.step = len(ret.data) // ret.height
+        return ret
     
     def img_msg_to_cv2(self, img):
         return np.frombuffer(img.data, dtype=np.uint8).reshape(img.height, img.width, -1)
